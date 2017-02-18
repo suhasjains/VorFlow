@@ -1,9 +1,13 @@
----initialisation
+import numpy as np
 
-
-class Mesh:
+class Mesh(N,L_x,L_y):
 	
-	
+	def __init__(self):
+		self.N = N; # Don't want globals in mesh.py otherwise prohibitive to module testing!
+		self.L_x = L_x;
+		self.L_y = L_y;
+		
+		
 	# properties:
 		# Domain limits Lx, Ly...
 
