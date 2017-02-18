@@ -28,8 +28,8 @@ class Mesh(N,L_x,L_y,BCs):
 		def update_mesh(self,data,dt):
 				# Forward Euler advance data by dt
 				for i in range(self.N):
-					self.site[i,0] = self.site[i,0] + dt * data.u_vel[i];
-					self.site[i,1] = self.site[i,1] + dt * data.v_vel[i];
+						self.site[i,0] = self.site[i,0] + dt * data.u_vel[i];
+						self.site[i,1] = self.site[i,1] + dt * data.v_vel[i];
 				
 				# Regenerate mesh
 				self.generate_mesh();
@@ -55,7 +55,7 @@ class Mesh(N,L_x,L_y,BCs):
 
 				# Neighbours
 				for i in range(N):
-						here = np.where(voronoi.ridge_points[0:N,:] == i); # Finds the site indices of points i
+						here = np.where(voronoi.ridge_points[0:N,:] == i); # Finds the site indices of point i
 						self.neighbor[i] = np.zeros(self.n_neighbor[i]);
 						for j in range(self.n_neighbor[i]):
 								# Pick out the index which is across from i
@@ -73,18 +73,24 @@ class Mesh(N,L_x,L_y,BCs):
 
 				# Face
 				for i in range(N):
-						here = np.where(voronoi.ridge_points[0:N,:] == i); # Finds the site indices of points i
+						ridge_indices = np.where(voronoi.ridge_points[0:N,:] == i)[0]; # Finds the ridge indices of point i
 						self.face[i] = np.zeros(self.n_neighbor[i]);
 						for j in range(self.n_neighbor[i]):
-								x1 = voronoi.vertices[];
-								x2 = voronoi.vertices[];
-									self.face[i][j] = np.sqrt(1);
+								vertex_indices = voronoi.ridge_vertices[ridge_indices[j]];
+								f = voronoi.vertices[vertex_indices[0],:] - voronoi.vertices[vertex_indices[1],:];
+								self.face[i][j] = np.sqrt(f[0]**2 + f[1]**2);
 
 
-				# area
-				# face_center
-				# grad_area
-				# grad_area_t
+				# Area
+				
+				
+				# FaceCentre
+				
+				
+				# GradArea
+				
+				
+				# GradAreaT
 
 
 				# isBoundary

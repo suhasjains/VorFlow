@@ -8,10 +8,12 @@ L_x = 1.;
 L_y = 1.;
 T_end = 1.;
 dt = 0.01;
-nu = 0.01; # Nondimensionalise with Re
+Re = 0.01;
 BCs = np.array([0,0,0,0]);
 BC_vals = np.array([-1,-1,-1,-1]);
 
 
 
+# Derived quantities
 
+nu = L_x / Re;
