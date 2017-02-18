@@ -46,25 +46,26 @@ class Mesh(N,L_x,L_y,BCs):
 		# Call Voronoi Mesher
 		if self.is_periodic:
 			voronoi = Voronoi(tiled_site);	
-			
-			# Set the connectivity (self.neighbor) *just for the first N sites*
-			*XXXXX*
-			
 		else:
 			voronoi = Voronoi(self.site);
-			# Set the connectivity (self.neighbor)
-                        *XXXXX*
-		
-		
+
+		# Set the connectivity (self.neighbor)
+                for i in range(N):
+                        self.n_neighbor[i] = np.sum(voronoi.ridge_points[0:N,:] == i);
+            
+                    for i in range(N):
+                        here = np.where(voronoi.ridge_points[0:N,:] == i); # Finds the site indices of points i
+                        self.neighbor[i] = np.zeros(self.n_neighbor[i]);
+                        for j in range(self.n_neighbor[i]):
+                                # Pick out the index which is across from i
+                                self.neighbor[i][j] = voronoi.ridge_points[here[0][j], not here[1][j]];
+                
+                # Delete last 8/9 of voronoi
+
 		# Calculate each of the properties sequentially (in individual for loops):
 		
-		for i in range(N):
-			self.n_neighbor[i] = 
-	
 			
 			# area	
-			
-			# neighbor
 		
 			# length
 
