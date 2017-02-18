@@ -14,5 +14,5 @@ mesh = Mesh(N,L_x,L_y,BCs);
 
 # Solve
 
-solve(N,dt,T_end,nu,
+solve(N,dt,T_end,nu,mesh,BCs,BC_vals);
 
