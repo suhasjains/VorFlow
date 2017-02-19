@@ -102,12 +102,20 @@ class Mesh:
                                 #print voronoi.points
 
 				# Set the connectivity
+
+                                #Setting number of neighbors
 				for i in range(self.N):
+                                    for j in voronoi.ridge_points[:,1]:
+                                        if (j == i):
+                                            self.n_neighbor[i] += 1;
                                     for j in voronoi.ridge_points[:,0]:
                                         if (j == i):
-                                            print "Yes"
                                             self.n_neighbor[i] += 1;
-                                    print i
+
+                                #testing number of neighbors
+                                for i in range(self.N):
+                                    print self.n_neighbor[i];
+
 
 
                                                 #for j in voronoi.ridge_points[:,1]:
@@ -143,49 +151,49 @@ class Mesh:
 			#					vertex_indices = voronoi.ridge_vertices[ridge_indices[j]];
 			#					f = voronoi.vertices[vertex_indices[0],:] - voronoi.vertices[vertex_indices[1],:];
 			#					self.face[i][j] = np.sqrt(f[0]**2 + f[1]**2);
-
-
-				# Area
-				
-				
-				# FaceCentre
-				
-				
-				# GradArea
-				
-				
-				# GradAreaT
-
-
-				# isBoundary
-				for i in range(self.N):
-						self.is_boundary[i] = False; # Extend this after Infinite domain works.
-
-
-				# Fix neighbours and sew edge connectivity together
-				if self.is_periodic:
-						for j in range(self.n_neighbor[i]):
-								escaped = False;
-								where = np.zeros(2);
-								site_neighbour = self.voronoi.points[self.neighbor[i][j],:];
-								if site_neighbour[0] < 0.:
-										escaped = True;
-										where[0] = -1;
-								if site_neighbour[0] >= self.L_x:
-										escaped = True;
-										where[0] = +1;
-								if site_neighbour[1] < 0.:
-										escaped = True;
-										where[1] = -1;
-								if site_neighbour[1] >= self.L_y:
-										escaped = True;
-										where[1] = +1;
-								
-								# Find missing soul mate <3
-								if escaped:
-										moveback = where[0]*1 + where[1]*3 + 5;
-										if moveback > 4: moveback -= 1;
-										self.neighbor[i][j] -= moveback;
+#
+#
+#				# Area
+#				
+#				
+#				# FaceCentre
+#				
+#				
+#				# GradArea
+#				
+#				
+#				# GradAreaT
+#
+#
+#				# isBoundary
+#				for i in range(self.N):
+#						self.is_boundary[i] = False; # Extend this after Infinite domain works.
+#
+#
+#				# Fix neighbours and sew edge connectivity together
+#				if self.is_periodic:
+#						for j in range(self.n_neighbor[i]):
+#								escaped = False;
+#								where = np.zeros(2);
+#								site_neighbour = self.voronoi.points[self.neighbor[i][j],:];
+#								if site_neighbour[0] < 0.:
+#										escaped = True;
+#										where[0] = -1;
+#								if site_neighbour[0] >= self.L_x:
+#										escaped = True;
+#										where[0] = +1;
+#								if site_neighbour[1] < 0.:
+#										escaped = True;
+#										where[1] = -1;
+#								if site_neighbour[1] >= self.L_y:
+#										escaped = True;
+#										where[1] = +1;
+#								
+#								# Find missing soul mate <3
+#								if escaped:
+#										moveback = where[0]*1 + where[1]*3 + 5;
+#										if moveback > 4: moveback -= 1;
+#										self.neighbor[i][j] -= moveback;
 
 
 
