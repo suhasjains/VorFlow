@@ -8,7 +8,7 @@ class Mesh:
 				self.N = N;
 				self.L_x = L_x;
 				self.L_y = L_y;
-				self.is_periodic = np.all(BCs == 0);
+				self.is_periodic = np.all(BCs == 0);    #BCs = 0 is periodic
 				
 				# Initialise mesh dataspace
 				self.site = np.random.rand(N,2);
@@ -53,7 +53,8 @@ class Mesh:
 		def generate_mesh(self):
 				# Extend periodic domain
 				if self.is_periodic:
-						# Tile the sites NOTE: This is very inefficient! Later try using just a few critical edge sites. However, this will require rewriting the periodic connectivity algorithm. (AW)
+						# Tile the sites NOTE: This is very inefficient! Later try using just a few critical edge sites. 
+                                                # However, this will require rewriting the periodic connectivity algorithm. (AW)
 						tiled_site = np.zeros([9*self.N,2]);
 						# Ordered tiling for easy indexing later
 						tiled_site[:,0] = np.concatenate((self.site[:,0],
@@ -82,9 +83,12 @@ class Mesh:
 						voronoi = Voronoi(self.site);
 				self.voronoi = voronoi; # Store for use later when plotting
 
+                                print voronoi.points
+
 				# Set the connectivity
 				for i in range(self.N):
 						self.n_neighbor[i] = np.sum(voronoi.ridge_points[0:self.N,:] == i, dtype=int);
+                                                #print self.n_neighbor[i];
 
 				# Neighbours
 				for i in range(self.N):
