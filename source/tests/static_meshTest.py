@@ -24,6 +24,8 @@ print 'length: '+test[np.all(np.abs(np.sum(mesh.length[1],axis=1)) == L / np.sqr
 # face
 print 'face: '+test[np.all(mesh.face[0] == L / np.sqrt(N))]
 
+# face_center
+print 'face_center: '+test[np.sqrt(mesh.face_center[0][0,0]**2 + mesh.face_center[0][0,1]**2) == L / (2.*np.sqrt(N)) ]; 
 
 plot_mesh(mesh);
 

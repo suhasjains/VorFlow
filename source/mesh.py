@@ -106,11 +106,11 @@ class Mesh:
 				# Neighbours
 				for i in range(self.N):
 						here = np.where(voronoi.ridge_points == i); # Finds the site indices of point i
-						self.neighbor[i] = np.zeros(self.n_neighbor[i],dtype=int);
+                                                self.neighbor[i] = np.zeros(self.n_neighbor[i],dtype=int);
 						for j in range(self.n_neighbor[i]):
 								# Pick out the index which is across from i
 								self.neighbor[i][j] = voronoi.ridge_points[here[0][j], int(not here[1][j])];
-				
+			    
 
 				# Calculate each of the properties sequentially (in individual for loops):
 				# Only for first N sites!
@@ -120,6 +120,7 @@ class Mesh:
 						self.length[i] = np.zeros([self.n_neighbor[i],2]);
 						for j in range(self.n_neighbor[i]):
 								self.length[i][j,:] = voronoi.points[self.neighbor[i][j]] - voronoi.points[i];
+
 
 				# Face
 				for i in range(self.N):
@@ -133,8 +134,14 @@ class Mesh:
 
 				# Area
 				
-				
 				# FaceCentre
+				for i in range(self.N):
+						ridge_indices = np.where(voronoi.ridge_points == i)[0]; # Finds the ridge indices of point i
+						self.face_center[i] = np.zeros((self.n_neighbor[i],2));
+						for j in range(self.n_neighbor[i]):
+								vertex_indices = voronoi.ridge_vertices[ridge_indices[j]];
+								f = 0.5*(voronoi.vertices[vertex_indices[0],:] + voronoi.vertices[vertex_indices[1],:]);
+                                                                self.face_center[i][j,:] = f[:] - self.site[i,:];
 				
 				
 				# GradArea
