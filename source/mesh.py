@@ -54,7 +54,7 @@ class Mesh:
 				# Extend periodic domain
 				if self.is_periodic:
 						# Tile the sites NOTE: This is very inefficient! Later try using just a few critical edge sites. However, this will require rewriting the periodic connectivity algorithm. (AW)
-						tiled_site = np.zeros([9*N,2]);
+						tiled_site = np.zeros([9*self.N,2]);
 						# Ordered tiling for easy indexing later
 						tiled_site[:,0] = np.concatenate((self.site[:,0],
 														  self.site[:,0]-self.L_x,
@@ -64,7 +64,7 @@ class Mesh:
 														  self.site[:,0]+self.L_x,
 														  self.site[:,0]-self.L_x,
 														  self.site[:,0],
-														  self.site[:,0]+self.L_x  ),axis=1)
+														  self.site[:,0]+self.L_x  ))
 						tiled_site[:,1] = np.concatenate((self.site[:,0],
 														  self.site[:,1]-self.L_y,
 														  self.site[:,1]-self.L_y,
@@ -73,7 +73,7 @@ class Mesh:
 														  self.site[:,1],
 														  self.site[:,1]+self.L_y,
 														  self.site[:,1]+self.L_y,
-														  self.site[:,1]+self.L_y),axis=1)
+														  self.site[:,1]+self.L_y))
 
 				# Call Voronoi Mesher
 				if self.is_periodic:

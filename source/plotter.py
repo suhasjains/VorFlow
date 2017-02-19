@@ -11,9 +11,9 @@ def plot_mesh(mesh):
 		plt.xlabel(r'$x$')
 		plt.ylabel(r'$y$')
 		plt.title('Voronoi Mesh')
+		plt.axis('scaled');
 		plt.xlim([0.,mesh.L_x]);
 		plt.ylim([0.,mesh.L_y]);
-		plt.axis('scaled');
 		plt.show();
 
 
@@ -30,9 +30,9 @@ def make_frame(mesh,field,name):
 		plt.xlabel(r'$x$')
 		plt.ylabel(r'$y$')
 		plt.title('Voronoi Mesh and '+name)
+		plt.axis('scaled');
 		plt.xlim([0.,mesh.L_x]);
 		plt.ylim([0.,mesh.L_y]);
-		plt.axis('scaled');
 		plt.show();
 
 
