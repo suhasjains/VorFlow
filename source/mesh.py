@@ -1,9 +1,9 @@
 import numpy as np
 from scipy.spatial import *
 
-class Mesh(N,L_x,L_y,BCs):
+class Mesh:
 	
-		def __init__(self):
+		def __init__(self,N,L_x,L_y,BCs):
 				# Don't want globals in mesh.py otherwise prohibitive to module testing!
 				self.N = N;
 				self.L_x = L_x;
@@ -55,8 +55,25 @@ class Mesh(N,L_x,L_y,BCs):
 				if self.is_periodic:
 						# Tile the sites NOTE: This is very inefficient! Later try using just a few critical edge sites. However, this will require rewriting the periodic connectivity algorithm. (AW)
 						tiled_site = np.zeros([9*N,2]);
-						tiled_site[:,0] = np.concatenate((self.site[:,0],self.site[:,0]-L_x,self.site[:,0],self.site[:,0]+L_x,self.site[:,0]-L_x,self.site[:,0]+L_x,self.site[:,0]-L_x,self.site[:,0],self.site[:,0]+L_x),axis=1)
-						tiled_site[:,1] = np.concatenate((self.site{:,0],self.site[:,1]-L_y,self.site[:,1]-L_y,self.site[:,1]-L_y,self.site[:,1],self.site[:,1],self.site[:,1]+L_y,self.site[:,1]+L_y,self.site[:,1]+L_y),axis=1)		
+						# Ordered tiling for easy indexing later
+						tiled_site[:,0] = np.concatenate((self.site[:,0],
+														  self.site[:,0]-self.L_x,
+														  self.site[:,0],
+														  self.site[:,0]+self.L_x,
+														  self.site[:,0]-self.L_x,
+														  self.site[:,0]+self.L_x,
+														  self.site[:,0]-self.L_x,
+														  self.site[:,0],
+														  self.site[:,0]+self.L_x  ),axis=1)
+						tiled_site[:,1] = np.concatenate((self.site[:,0],
+														  self.site[:,1]-self.L_y,
+														  self.site[:,1]-self.L_y,
+														  self.site[:,1]-self.L_y,
+														  self.site[:,1],
+														  self.site[:,1],
+														  self.site[:,1]+self.L_y,
+														  self.site[:,1]+self.L_y,
+														  self.site[:,1]+self.L_y),axis=1)
 
 				# Call Voronoi Mesher
 				if self.is_periodic:
@@ -111,7 +128,7 @@ class Mesh(N,L_x,L_y,BCs):
 
 				# isBoundary
 				for i in range(N):
-						self.is_boundary(i) = False; # Extend this after Infinite domain works.
+						self.is_boundary[i] = False; # Extend this after Infinite domain works.
 
 
 				# Fix neighbours and sew edge connectivity together
