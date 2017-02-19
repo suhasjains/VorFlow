@@ -2,8 +2,8 @@ import numpy as np
 from scipy.spatial import *
 import matplotlib.pyplot as plt
 
-N = 10;
-Lx = 2.;
+N = 100;
+Lx = 1.;
 Ly = 1.;
 #points = np.array([[0, 0], [0, 1], [0, 2], [1, 0], [1, 1], [1, 2], [2, 0], [2, 1], [2, 2]])
 points = np.random.rand(N,2);
