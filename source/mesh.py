@@ -37,14 +37,14 @@ class Mesh:
 				if self.is_periodic:
 						for i in range(self.N):
 								# Check if cell has been advected across the periodic boundary
-							if self.site[i,0] < 0.:
-									self.site[i,0] += self.L_x;
-							if self.site[i,0] >= self.L_x:
-									self.site[i,0] -= self.L_x;
-							if self.site[i,1] < 0.:
-									self.site[i,1] += self.L_y;
-							if self.site[i,1] >= self.L_y:
-									self.site[i,0] -= self.L_y;
+								if self.site[i,0] < 0.:
+										self.site[i,0] += self.L_x;
+								elif self.site[i,0] >= self.L_x:
+										self.site[i,0] -= self.L_x;
+								if self.site[i,1] < 0.:
+										self.site[i,1] += self.L_y;
+								elif self.site[i,1] >= self.L_y:
+										self.site[i,1] -= self.L_y;
 	
 				# Regenerate mesh
 				self.generate_mesh();
