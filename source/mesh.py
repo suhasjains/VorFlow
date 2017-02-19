@@ -11,8 +11,24 @@ class Mesh:
 				self.is_periodic = np.all(BCs == 0);    #BCs = 0 is periodic
 				
 				# Initialise mesh dataspace
-				self.site = np.random.rand(N,2);
-				self.site[:,0] = L_x * self.site[:,0]; self.site[:,1] = L_y * self.site[:,1];
+				
+                                #use this for random sites
+                                #self.site = np.random.rand(N,2);   
+				#self.site[:,0] = L_x * self.site[:,0]; 
+                                #self.site[:,1] = L_y * self.site[:,1];
+                                
+                                #use this for square cartesion grid - use a square number for N and same L_x and L_y
+                                self.site = np.zeros((N,2));
+                                for i in range(int(np.sqrt(N))):
+                                    for j in range(int(np.sqrt(N))):
+                                        self.site[i*int(np.sqrt(N))+j,0] =  i;
+                                self.site[:,1] = np.tile(np.arange(np.sqrt(N)),np.sqrt(N));
+                                
+                                self.site[:,0] = L_x*self.site[:,0]/np.sqrt(N) + L_x/(2.0*np.sqrt(N));
+                                self.site[:,1] = L_y*self.site[:,1]/np.sqrt(N) + L_y/(2.0*np.sqrt(N));
+
+                                #print self.site[:,1];
+
 				self.area = np.zeros(N);
 				self.n_neighbor = np.zeros(N,dtype=int);
 				# These will be lists of arrays, i.e. neighbour[i][j]
@@ -83,7 +99,7 @@ class Mesh:
 						voronoi = Voronoi(self.site);
 				self.voronoi = voronoi; # Store for use later when plotting
 
-                                print voronoi.points
+                                #print voronoi.points
 
 				# Set the connectivity
 				for i in range(self.N):

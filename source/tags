@@ -1,0 +1,64 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+BC_vals	definitions.py	/^BC_vals = np.array([-1,-1,-1,-1]);$/;"	v
+BCs	definitions.py	/^BCs = np.array([0,0,0,0]);$/;"	v
+Data	solver.py	/^class Data:$/;"	c
+L_x	definitions.py	/^L_x = 1.;$/;"	v
+L_x	tests/meshTest.py	/^L_x = 1.;$/;"	v
+L_x	tests/static_meshTest.py	/^L_x = 1.;$/;"	v
+L_y	definitions.py	/^L_y = 1.;$/;"	v
+L_y	tests/meshTest.py	/^L_y = 1.;$/;"	v
+L_y	tests/static_meshTest.py	/^L_y = 1.;$/;"	v
+Lx	sandbox/vorgen.py	/^Lx = 1.;$/;"	v
+Ly	sandbox/vorgen.py	/^Ly = 1.;$/;"	v
+Mesh	mesh.py	/^class Mesh:$/;"	c
+N	definitions.py	/^N = 100;$/;"	v
+N	sandbox/vorgen.py	/^N = 100;$/;"	v
+N	tests/meshTest.py	/^N = 200;$/;"	v
+N	tests/static_meshTest.py	/^N = 4;$/;"	v
+Re	definitions.py	/^Re = 0.01;$/;"	v
+T_end	definitions.py	/^T_end = 1.;$/;"	v
+Tend	tests/meshTest.py	/^Tend = 1.;$/;"	v
+Tend	tests/static_meshTest.py	/^Tend = 0.5;$/;"	v
+__init__	mesh.py	/^		def __init__(self,N,L_x,L_y,BCs):$/;"	m	class:Mesh
+__init__	solver.py	/^        def __init__(self,N):$/;"	m	class:Data
+animation	plotting.py	/^import matplotlib.animation as animation$/;"	i
+cm	plotting.py	/^import matplotlib.cm as cm$/;"	i
+data	tests/meshTest.py	/^data = Data(N);$/;"	v
+dt	definitions.py	/^dt = 0.01;$/;"	v
+dt	tests/meshTest.py	/^dt = 0.1;$/;"	v
+dt	tests/static_meshTest.py	/^dt = 0.01;$/;"	v
+fig	tests/meshTest.py	/^fig = plt.figure()$/;"	v
+fig	tests/static_meshTest.py	/^fig = plt.figure()$/;"	v
+generate_mesh	mesh.py	/^		def generate_mesh(self):$/;"	m	class:Mesh
+make_frame	plotting.py	/^def make_frame(mesh,field,name):$/;"	f
+matplotlib	plotting.py	/^import matplotlib.animation as animation$/;"	i
+matplotlib	plotting.py	/^import matplotlib.cm as cm$/;"	i
+matplotlib	plotting.py	/^import matplotlib.pyplot as plt$/;"	i
+matplotlib	sandbox/vorgen.py	/^import matplotlib.pyplot as plt$/;"	i
+mesh	main.py	/^mesh = Mesh(N,L_x,L_y,BCs);$/;"	v
+mesh	tests/meshTest.py	/^mesh = Mesh(N,L_x,L_y,np.zeros(4));$/;"	v
+mesh	tests/static_meshTest.py	/^mesh = Mesh(N,L_x,L_y,np.zeros(4));$/;"	v
+np	definitions.py	/^import numpy as np$/;"	i
+np	mesh.py	/^import numpy as np$/;"	i
+np	plotting.py	/^import numpy as np$/;"	i
+np	sandbox/vorgen.py	/^import numpy as np$/;"	i
+np	solver.py	/^import numpy as np$/;"	i
+np	tests/meshTest.py	/^import numpy as np$/;"	i
+np	tests/static_meshTest.py	/^import numpy as np$/;"	i
+nu	definitions.py	/^nu = L_x \/ Re;$/;"	v
+plot_mesh	plotting.py	/^def plot_mesh(mesh):$/;"	f
+plt	plotting.py	/^import matplotlib.pyplot as plt$/;"	i
+plt	sandbox/vorgen.py	/^import matplotlib.pyplot as plt$/;"	i
+points	sandbox/vorgen.py	/^points = np.random.rand(N,2);$/;"	v
+pp	sandbox/vorgen.py	/^pp = np.zeros([9*N,2]);$/;"	v
+sys	tests/meshTest.py	/^import sys$/;"	i
+sys	tests/static_meshTest.py	/^import sys$/;"	i
+t	tests/meshTest.py	/^t = 0.;$/;"	v
+update_mesh	mesh.py	/^		def update_mesh(self,data,dt):$/;"	m	class:Mesh
+vor	sandbox/vorgen.py	/^vor = Voronoi(pp,qhull_options='Qbb Qc')$/;"	v
+voronoi_plot_2d	plotting.py	/^from scipy.spatial import voronoi_plot_2d$/;"	i
