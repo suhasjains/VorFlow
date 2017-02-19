@@ -7,19 +7,26 @@ from solver import *
 
 
 N = 16;
-L_x = 1.;
-L_y = 1.;
-dt = 0.01;
-Tend = 0.5;
+L = 1.;
 
-mesh = Mesh(N,L_x,L_y,np.zeros(4));
+mesh = Mesh(N,L,L,np.zeros(4),False); # Make Cartesian grid (random=False)
 
-#print len(mesh.voronoi.points);
+test = ['FAIL!', 'PASS!'];
 
-plt.ion()
-fig = plt.figure()
+print '\nCartesian Tests: \n'
+
+# n_neighbours
+print 'n_neighbours: '+test[np.all(mesh.n_neighbor == 4)]
+
+# length
+print 'length: '+test[np.all(np.abs(np.sum(mesh.length[1],axis=1)) == L / np.sqrt(N))]
+
+# face
+print 'face: '+test[np.all(mesh.face[0] == L / np.sqrt(N))]
+
+
 plot_mesh(mesh);
-plt.pause(15);
+
 
 
 
