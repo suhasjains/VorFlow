@@ -103,35 +103,46 @@ class Mesh:
 
 				# Set the connectivity
 				for i in range(self.N):
-						self.n_neighbor[i] = np.sum(voronoi.ridge_points[0:self.N,:] == i, dtype=int);
+                                    for j in voronoi.ridge_points[:,0]:
+                                        if (j == i):
+                                            print "Yes"
+                                            self.n_neighbor[i] += 1;
+                                    print i
+
+
+                                                #for j in voronoi.ridge_points[:,1]:
+                                                #    if j==i:
+                                                #        self.n_neighbor[i] += 1;        
+						#self.n_neighbor[i] = np.sum(voronoi.ridge_points[0:self.N,:] == i, dtype=int);
                                                 #print self.n_neighbor[i];
+                                                        
 
-				# Neighbours
-				for i in range(self.N):
-						here = np.where(voronoi.ridge_points[0:self.N,:] == i); # Finds the site indices of point i
-						self.neighbor[i] = np.zeros(self.n_neighbor[i],dtype=int);
-						for j in range(self.n_neighbor[i]):
-								# Pick out the index which is across from i
-								self.neighbor[i][j] = voronoi.ridge_points[here[0][j], int(not here[1][j])];
-				
+			#	# Neighbours
+			#	for i in range(self.N):
+			#			here = np.where(voronoi.ridge_points[0:self.N,:] == i); # Finds the site indices of point i
+			#			self.neighbor[i] = np.zeros(self.n_neighbor[i],dtype=int);
+			#			for j in range(self.n_neighbor[i]):
+			#					# Pick out the index which is across from i
+			#					self.neighbor[i][j] = voronoi.ridge_points[here[0][j], int(not here[1][j])];
+			#	
 
-				# Calculate each of the properties sequentially (in individual for loops):
-				# Only for first N sites!
+			#	# Calculate each of the properties sequentially (in individual for loops):
+			#	# Only for first N sites!
 
-				# Length
-				for i in range(self.N):
-						self.length[i] = np.zeros([self.n_neighbor[i],2]);
-						for j in range(self.n_neighbor[i]):
-								self.length[i][j,:] = voronoi.points[self.neighbor[i][j]] - voronoi.points[i];
+			#	# Length
+			#	for i in range(self.N):
+			#			self.length[i] = np.zeros([self.n_neighbor[i],2]);
+			#			for j in range(self.n_neighbor[i]):
+			#					self.length[i][j,:] = voronoi.points[self.neighbor[i][j]] - voronoi.points[i];
 
-				# Face
-				for i in range(self.N):
-						ridge_indices = np.where(voronoi.ridge_points[0:self.N,:] == i)[0]; # Finds the ridge indices of point i
-						self.face[i] = np.zeros(self.n_neighbor[i]);
-						for j in range(self.n_neighbor[i]):
-								vertex_indices = voronoi.ridge_vertices[ridge_indices[j]];
-								f = voronoi.vertices[vertex_indices[0],:] - voronoi.vertices[vertex_indices[1],:];
-								self.face[i][j] = np.sqrt(f[0]**2 + f[1]**2);
+			#	# Face
+			#	for i in range(self.N):
+			#			ridge_indices = np.where(voronoi.ridge_points[0:self.N,:] == i)[0]; # Finds the ridge indices of point i
+			#			self.face[i] = np.zeros(self.n_neighbor[i]);
+			#			for j in range(self.n_neighbor[i]):
+			#					vertex_indices = voronoi.ridge_vertices[ridge_indices[j]];
+			#					f = voronoi.vertices[vertex_indices[0],:] - voronoi.vertices[vertex_indices[1],:];
+			#					self.face[i][j] = np.sqrt(f[0]**2 + f[1]**2);
 
 
 				# Area

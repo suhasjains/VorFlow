@@ -6,7 +6,7 @@ from plotting import *
 from solver import *
 
 
-N = 200;
+N = 100;
 L_x = 1.;
 L_y = 1.;
 dt = 0.1;
