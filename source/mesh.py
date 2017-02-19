@@ -23,7 +23,9 @@ class Mesh(N,L_x,L_y,BCs):
 				self.grad_area = range(N);
 				self.grad_area_t = range(N);
 				self.is_boundary = range(N);
-				self.voronoi = 0; # Stores the Voronoi Mesh Scipy object
+				self.voronoi = 0; # Make dataspace for storing Scipy Voronoi object for easy plotting
+				
+				self.generate_mesh();
 				
 
 		def update_mesh(self,data,dt):
@@ -61,6 +63,7 @@ class Mesh(N,L_x,L_y,BCs):
 						voronoi = Voronoi(tiled_site);
 				else:
 						voronoi = Voronoi(self.site);
+				self.voronoi = voronoi; # Store for use later when plotting
 
 				# Set the connectivity
 				for i in range(N):
