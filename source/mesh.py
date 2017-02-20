@@ -9,14 +9,18 @@ class Mesh:
 				self.L_x = L_x;
 				self.L_y = L_y;
 				self.is_periodic = np.all(BCs == 0);    # BCs = 0 is periodic
-                                self.mesh_type = mesh_type;
+				if !self.is_periodic:
+					print 'Non-periodic is not implemented yet!'
+				
+				self.mesh_type = mesh_type;
 				
 				# Initialise mesh dataspace
 				if mesh_type=="random": # Make random sites
 						self.site = np.random.rand(N,2);
 						self.site[:,0] = L_x * self.site[:,0];
 						self.site[:,1] = L_y * self.site[:,1];
-                                elif mesh_type=="cartesian": # Make Cartesian grid (Square N, L_x=L_y)
+
+				elif mesh_type=="cartesian": # Make Cartesian grid (Square N, L_x=L_y)
 						self.site = np.zeros([N,2]);
 						sqrtN = int(np.sqrt(N));
 						for i in range(sqrtN):
@@ -26,15 +30,15 @@ class Mesh:
 						self.site[:,1] = np.tile(np.arange(sqrtN),sqrtN);
 						self.site[:,0] = L_x*self.site[:,0]/sqrtN + L_x/(2.*sqrtN);
 						self.site[:,1] = L_y*self.site[:,1]/sqrtN + L_y/(2.*sqrtN);
-                                
-                                elif mesh_type=="nonuniform": #Make non uniform grid (Square N, L_x=L_y) 
-                                                self.site = np.zeros([N,2]);
-                                                sqrtN = int(np.sqrt(N));
-                                                for i in range(sqrtN):
-                                                                for j in range(sqrtN):
-                                                                                self.site[i*sqrtN+j,0] = i;
 
-                                                self.site[:,1] = np.tile(np.arange(sqrtN),sqrtN);
+				elif mesh_type=="nonuniform": # Make non-uniform grid (Square N, L_x=L_y)
+						self.site = np.zeros([N,2]);
+						sqrtN = int(np.sqrt(N));
+						for i in range(sqrtN):
+								for j in range(sqrtN):
+										self.site[i*sqrtN+j,0] = i;
+
+                        self.site[:,1] = np.tile(np.arange(sqrtN),sqrtN);
 						#self.site[:,0] = L_x*(1. - np.cos((L_x*self.site[:,0]/sqrtN + L_x/(2.*sqrtN))*np.pi/(2.*L_x)));
 						#self.site[:,1] = L_y*(1. - np.cos((L_y*self.site[:,1]/sqrtN + L_y/(2.*sqrtN))*np.pi/(2.*L_x)));
 						self.site[:,0] = L_x*((self.site[:,0]/sqrtN + L_x/(2.*sqrtN))**2);
@@ -123,7 +127,7 @@ class Mesh:
 				# Neighbours
 				for i in range(self.N):
 						here = np.where(voronoi.ridge_points == i); # Finds the site indices of point i
-                                                self.neighbor[i] = np.zeros(self.N_neighbor[i],dtype=int);
+						self.neighbor[i] = np.zeros(self.N_neighbor[i],dtype=int);
 						for j in range(self.N_neighbor[i]):
 								# Pick out the index which is across from i
 								self.neighbor[i][j] = voronoi.ridge_points[here[0][j], int(not here[1][j])];

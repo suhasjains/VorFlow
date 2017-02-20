@@ -9,7 +9,7 @@ from solver import *
 N = 16;
 L = 1.;
 
-mesh = Mesh(N,L,L,np.zeros(4),'nonuniform'); #Use either "random", "cartesian" or "nonuniform" for mesh_type
+mesh = Mesh(N,L,L,np.zeros(4),'cartesian'); #Use either "random", "cartesian" or "nonuniform" for mesh_type
 
 test = ['FAIL!', 'PASS!'];
 
@@ -20,10 +20,10 @@ if mesh.mesh_type == 'cartesian':
                 print 'N_neighbours: '+test[np.all(mesh.N_neighbor == 4)];
                 
                 # length
-                print 'length: '+test[np.all(np.abs(np.sum(mesh.length[1],axis=1)) == L / np.sqrt(N))];
+                print 'length: '+test[np.all(np.abs(np.sum(np.asarray(mesh.length),axis=2)) == L / np.sqrt(N))];
                 
                 # face
-                print 'face: '+test[np.all(mesh.face[0] == L / np.sqrt(N))];
+                print 'face: '+test[np.all(np.asarray(mesh.face) == L / np.sqrt(N))];
                 
                 # face_center
                 print 'face_center: '+test[np.sqrt(mesh.face_center[0][0,0]**2 + mesh.face_center[0][0,1]**2) == L / (2.*np.sqrt(N)) ];
@@ -45,7 +45,7 @@ elif mesh.mesh_type == 'nonuniform':
 
                 # face_center
                 print 'face_center: '+test[np.sqrt(mesh.face_center[0][3,0]**2 + mesh.face_center[0][3,1]**2) == (0.375**2 - 0.125**2)/2. ];
-                
+
 
 
 plot_mesh(mesh);
