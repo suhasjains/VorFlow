@@ -17,15 +17,21 @@ def solve(data, D, L, G, Re, dt):
 	# Solve for u_star
 	A1 = I - L/(2.*Re)
 	A2 = I + L/(2.*Re)
-	rhs = -np.dot(G, data.press) + np.dot(A2, data.u_vel)
-	u_star = np.linalg.solve(A1, rhs)
+	rhs_u = -np.dot(G, data.press) + np.dot(A2, data.u_vel)
+	# should be y gradient
+	rhs_v = -np.dot(G, data.press) + np.dot(A2, data.v_vel)
+	u_star = np.linalg.solve(A1, rhs_u)
+	v_star = np.linalg.solve(A1, rhs_v)
 	# Pressure correction
 	lhsPressure = np.dot(D, G)
-	rhsPressure = np.dot(D, u_star)
+	rhsPressure_u = np.dot(D, u_star)
+	rhsPressure_v = np.dot(D, v_star)
+	rhsPressure = rhsPressure_u + rhsPressure_v
 	P_tild, res, ra, s = np.linalg.lstsq(lhsPressure, rhsPressure)
 	# Update velocity and pressure
 	GP = np.dot(G, P_tild)
 	data.u_vel = u_star - dt*GP
+	data.v_vel = v_star - dt*GP #should be y gradient
 	data.press = data.press + P_tild
 	return data
 
