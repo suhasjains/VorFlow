@@ -19,7 +19,7 @@ data = Data(N);
 for i in range(N):
 		data.u_vel[i] = 1.;
 		data.v_vel[i] = 1.;
-		data.press[i] = np.exp(-((mesh.site[i,0]-L_x/2)**2 + (mesh.site[i,1]-L_y/2)**2));
+		data.press[i] = mesh.area[i]; #np.exp(-((mesh.site[i,0]-L_x/2)**2 + (mesh.site[i,1]-L_y/2)**2));
 
 
 t = 0.;
@@ -28,7 +28,7 @@ fig = plt.figure()
 while t < Tend:
 		mesh.update_mesh(data,dt);
 		#plot_mesh(mesh);
-		make_frame(mesh,data.press,'Pressure')
+		make_frame(mesh,data.press,'Area')
 		plt.pause(0.01);
 		t += dt;
 

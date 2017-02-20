@@ -27,8 +27,9 @@ class Mesh:
 						self.site[:,1] = L_y*self.site[:,1]/sqrtN + L_y/(2.*sqrtN);
 
 
+				self.centroid = np.zeros([N,2]);
 				self.area = np.zeros(N);
-				self.n_neighbor = np.zeros(N,dtype=int);
+				self.N_neighbor = np.zeros(N,dtype=int);
 				# These will be lists of arrays, i.e. neighbour[i][j]
 				self.neighbor = range(N);
 				self.length = range(N);
@@ -95,19 +96,20 @@ class Mesh:
 						voronoi = Voronoi(tiled_site);
 				else:
 						voronoi = Voronoi(self.site);
+				
 				self.voronoi = voronoi; # Store for use later when plotting
 				
 
 				# Set the connectivity
 				for i in range(self.N):
-						self.n_neighbor[i] = np.sum(voronoi.ridge_points == i, dtype=int);
+						self.N_neighbor[i] = np.sum(voronoi.ridge_points == i, dtype=int);
 
 
 				# Neighbours
 				for i in range(self.N):
 						here = np.where(voronoi.ridge_points == i); # Finds the site indices of point i
-                                                self.neighbor[i] = np.zeros(self.n_neighbor[i],dtype=int);
-						for j in range(self.n_neighbor[i]):
+                                                self.neighbor[i] = np.zeros(self.N_neighbor[i],dtype=int);
+						for j in range(self.N_neighbor[i]):
 								# Pick out the index which is across from i
 								self.neighbor[i][j] = voronoi.ridge_points[here[0][j], int(not here[1][j])];
 			    
@@ -117,31 +119,53 @@ class Mesh:
 
 				# Length
 				for i in range(self.N):
-						self.length[i] = np.zeros([self.n_neighbor[i],2]);
-						for j in range(self.n_neighbor[i]):
+						self.length[i] = np.zeros([self.N_neighbor[i],2]);
+						for j in range(self.N_neighbor[i]):
 								self.length[i][j,:] = voronoi.points[self.neighbor[i][j]] - voronoi.points[i];
 
 
 				# Face
 				for i in range(self.N):
 						ridge_indices = np.where(voronoi.ridge_points == i)[0]; # Finds the ridge indices of point i
-						self.face[i] = np.zeros(self.n_neighbor[i]);
-						for j in range(self.n_neighbor[i]):
+						self.face[i] = np.zeros(self.N_neighbor[i]);
+						for j in range(self.N_neighbor[i]):
 								vertex_indices = voronoi.ridge_vertices[ridge_indices[j]];
 								f = voronoi.vertices[vertex_indices[0],:] - voronoi.vertices[vertex_indices[1],:];
 								self.face[i][j] = np.sqrt(f[0]**2 + f[1]**2);
 
 
-				# Area
+				# Area & Centroid
+				for i in range(self.N):
+						region_index = voronoi.point_region[i]; # Finds the region index of point i
+						vertex_indices = voronoi.regions[region_index]; # Finds indices of vertices ordered around region of site i
+						vertices = voronoi.vertices[vertex_indices]; # Listed sometimes clockwise, sometimes counter-clockwise...
+						self.area[i] = 0.;
+						N_vertices = len(vertex_indices);
+						for j in range(N_vertices):
+								self.area[i] += 0.5 * (vertices[j][0] * vertices[(j+1)%N_vertices][1] -
+													   vertices[(j+1)%N_vertices][0] * vertices[j][1]);
+						
+						self.centroid[i,:] = 0.;
+						for j in range(N_vertices):
+								self.centroid[i,0] += ((vertices[j][0] + vertices[(j+1)%N_vertices][0]) *
+																(vertices[j][0] * vertices[(j+1)%N_vertices][1] -
+																 vertices[(j+1)%N_vertices][0] * vertices[j][1]));
+								self.centroid[i,1] += ((vertices[j][1] + vertices[(j+1)%N_vertices][1]) *
+																(vertices[j][0] * vertices[(j+1)%N_vertices][1] -
+																 vertices[(j+1)%N_vertices][0] * vertices[j][1]));
+				
+						self.centroid[i,:] /= 6.*self.area[i];
+						self.area[i] = np.abs(self.area[i]);
+				
 				
 				# FaceCentre
 				for i in range(self.N):
 						ridge_indices = np.where(voronoi.ridge_points == i)[0]; # Finds the ridge indices of point i
-						self.face_center[i] = np.zeros((self.n_neighbor[i],2));
-						for j in range(self.n_neighbor[i]):
+						self.face_center[i] = np.zeros((self.N_neighbor[i],2));
+						for j in range(self.N_neighbor[i]):
 								vertex_indices = voronoi.ridge_vertices[ridge_indices[j]];
-								f = 0.5*(voronoi.vertices[vertex_indices[0],:] + voronoi.vertices[vertex_indices[1],:]);
-                                                                self.face_center[i][j,:] = f[:] - self.site[i,:];
+								f = 0.5 * (voronoi.vertices[vertex_indices[0],:] + voronoi.vertices[vertex_indices[1],:]);
+								self.face_center[i][j,:] = f[:] - self.site[i,:];
 				
 				
 				# GradArea
@@ -157,7 +181,7 @@ class Mesh:
 
 				# Fix neighbours and sew edge connectivity together
 				if self.is_periodic:
-						for j in range(self.n_neighbor[i]):
+						for j in range(self.N_neighbor[i]):
 								escaped = False;
 								where = np.zeros(2);
 								site_neighbour = self.voronoi.points[self.neighbor[i][j],:];
