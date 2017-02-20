@@ -9,8 +9,8 @@ class Mesh:
 				self.L_x = L_x;
 				self.L_y = L_y;
 				self.is_periodic = np.all(BCs == 0);    # BCs = 0 is periodic
-				if !self.is_periodic:
-					print 'Non-periodic is not implemented yet!'
+				if ~self.is_periodic:
+					raise Exception("Non-periodic is not implemented yet!")
 				
 				self.mesh_type = mesh_type;
 				
@@ -38,11 +38,13 @@ class Mesh:
 								for j in range(sqrtN):
 										self.site[i*sqrtN+j,0] = i;
 
-                        self.site[:,1] = np.tile(np.arange(sqrtN),sqrtN);
+						self.site[:,1] = np.tile(np.arange(sqrtN),sqrtN);
 						#self.site[:,0] = L_x*(1. - np.cos((L_x*self.site[:,0]/sqrtN + L_x/(2.*sqrtN))*np.pi/(2.*L_x)));
 						#self.site[:,1] = L_y*(1. - np.cos((L_y*self.site[:,1]/sqrtN + L_y/(2.*sqrtN))*np.pi/(2.*L_x)));
 						self.site[:,0] = L_x*((self.site[:,0]/sqrtN + L_x/(2.*sqrtN))**2);
 						self.site[:,1] = L_y*((self.site[:,1]/sqrtN + L_y/(2.*sqrtN))**2);
+				else:
+						raise ValueError("You can't spell, fool...")
 
 
 
@@ -112,9 +114,9 @@ class Mesh:
 
 				# Call Voronoi Mesher
 				if self.is_periodic:
-						voronoi = Voronoi(tiled_site);
+						voronoi = Voronoi(tiled_site,qhull_options='Qbb Qc');
 				else:
-						voronoi = Voronoi(self.site);
+						voronoi = Voronoi(self.site,qhull_options='Qbb Qc');
 				
 				self.voronoi = voronoi; # Store for use later when plotting
 				

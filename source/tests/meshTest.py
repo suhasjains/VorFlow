@@ -6,13 +6,13 @@ from plotting import *
 from solver import *
 
 
-N = 50
+N = 49
 L_x = 1.
 L_y = 1.
 dt = 0.02
 Tend = 0.5
 
-mesh = Mesh(N,L_x,L_y,np.zeros(4),True)
+mesh = Mesh(N,L_x,L_y,np.zeros(4),'cartesian')
 
 data = Data(N)
 
