@@ -95,7 +95,7 @@ class Mesh:
 														  self.site[:,0]+self.L_x,
 														  self.site[:,0]-self.L_x,
 														  self.site[:,0],
-														  self.site[:,0]+self.L_x  ))
+														  self.site[:,0]+self.L_x))
 						tiled_site[:,1] = np.concatenate((self.site[:,1],
 														  self.site[:,1]-self.L_y,
 														  self.site[:,1]-self.L_y,
@@ -194,32 +194,11 @@ class Mesh:
 						self.is_boundary[i] = False; # Extend this after Infinite domain works.
 
 
-				# Fix neighbours and sew edge connectivity together
+				# Fix neighbours and sew edge connectivity together <3
 				if self.is_periodic:
-						for j in range(self.N_neighbor[i]):
-								escaped = False;
-								where = np.zeros(2);
-								site_neighbour = self.voronoi.points[self.neighbor[i][j],:];
-								if site_neighbour[0] < 0.:
-										escaped = True;
-										where[0] = -1;
-								if site_neighbour[0] >= self.L_x:
-										escaped = True;
-										where[0] = +1;
-								if site_neighbour[1] < 0.:
-										escaped = True;
-										where[1] = -1;
-								if site_neighbour[1] >= self.L_y:
-										escaped = True;
-										where[1] = +1;
-								
-								# Find missing soul mate <3
-								if escaped:
-										moveback = where[0]*1 + where[1]*3 + 5;
-										if moveback > 4: moveback -= 1;
-										self.neighbor[i][j] -= moveback;
-
-
+						for i in range(self.N):
+								for j in range(self.N_neighbor[i]):
+										self.neighbor[i][j] = self.neighbor[i][j]%self.N; # Well that's embarrassing
 
 
 		
