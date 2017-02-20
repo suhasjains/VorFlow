@@ -6,7 +6,7 @@ from plotter import *
 
 # Generate Mesh
 
-mesh = Mesh(N,L_x,L_y,BCs);
+mesh = Mesh(N,L_x,L_y,BCs)
 
 # Define Initial Conditions
 
@@ -14,5 +14,8 @@ mesh = Mesh(N,L_x,L_y,BCs);
 
 # Solve
 
-solve(N,dt,T_end,nu,mesh,BCs,BC_vals);
+Dx, Dy, L, Gx, Gy = time_step(mesh)
+
+data = solve(data, Dx, Dy, L, Gx, Gy, Re, dt)
+#data = solve(N,dt,T_end,nu,mesh,BCs,BC_vals)
 

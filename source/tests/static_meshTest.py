@@ -9,7 +9,7 @@ from solver import *
 N = 16;
 L = 1.;
 
-mesh = Mesh(N,L,L,np.zeros(4),'nonuniform'); #Use either "random", "catesian" or "nonuniform" for mesh_type
+mesh = Mesh(N,L,L,np.zeros(4),'nonuniform'); #Use either "random", "cartesian" or "nonuniform" for mesh_type
 
 test = ['FAIL!', 'PASS!'];
 
