@@ -6,30 +6,31 @@ from plotting import *
 from solver import *
 
 
-N = 100;
+N = 50;
 L_x = 1.;
 L_y = 1.;
-dt = 0.1;
-Tend = 1.;
+dt = 0.02;
+Tend = 0.5;
 
-mesh = Mesh(N,L_x,L_y,np.zeros(4));
+mesh = Mesh(N,L_x,L_y,np.zeros(4),True);
 
 data = Data(N);
-
-for i in range(N):
-		data.u_vel[i] = 1.;
-		data.v_vel[i] = 1.;
-		data.press[i] = mesh.area[i]; #np.exp(-((mesh.site[i,0]-L_x/2)**2 + (mesh.site[i,1]-L_y/2)**2));
-
 
 t = 0.;
 plt.ion()
 fig = plt.figure()
 while t < Tend:
-		mesh.update_mesh(data,dt);
+                for i in range(N):
+                        #data.u_vel[i] = -np.sin(2.*np.pi/L_y * (mesh.centroid[i][1] - L_y/2.));
+                        #data.v_vel[i] = np.sin(2.*np.pi/L_x * (mesh.centroid[i][0] - L_x/2.));
+		        data.u_vel[i] = -(mesh.centroid[i][1] - L_y/2.)/L_y;
+                        data.v_vel[i] = (mesh.centroid[i][0] - L_x/2.)/L_x;
+                        data.press[i] = mesh.area[i]/(2.*(L_x*L_y)/N);
+
+                mesh.update_mesh(data,dt);
 		#plot_mesh(mesh);
 		make_frame(mesh,data.press,'Area')
-		plt.pause(0.01);
+		plt.pause(0.005);
 		t += dt;
 
 
