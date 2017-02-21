@@ -57,8 +57,8 @@ def solve(data, Dx, Dy, L, Gx, Gy, Re, dt):
 	# Pressure correction
 	lhsPressure_x = dt*np.dot(Dx, Gx)
 	lhsPressure_y = dt*np.dot(Dy, Gy)
-	rhsPressure_u = np.dot(Dx, u_star)
-	rhsPressure_v = np.dot(Dy, v_star)
+	rhsPressure_u = 2*np.dot(Dx, u_star)
+	rhsPressure_v = 2*np.dot(Dy, v_star)
 	lhsPressure = lhsPressure_x + lhsPressure_y
 	rhsPressure = rhsPressure_u + rhsPressure_v
 	P_tild, res, ra, s = np.linalg.lstsq(lhsPressure, rhsPressure)
