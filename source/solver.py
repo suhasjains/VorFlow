@@ -50,13 +50,13 @@ def solve(data, Dx, Dy, L, Gx, Gy, Re, dt):
 	# Solve for u_star
 	A1 = I - L/(2.*Re)
 	A2 = I + L/(2.*Re)
-	rhs_u = -dt*np.dot(Gx, data.press) + np.dot(A2, data.u_vel)
-	rhs_v = -dt*np.dot(Gy, data.press) + np.dot(A2, data.v_vel)
+	rhs_u = -0.5*dt*np.dot(Gx, data.press) + np.dot(A2, data.u_vel)
+	rhs_v = -0.5*dt*np.dot(Gy, data.press) + np.dot(A2, data.v_vel)
 	u_star = np.linalg.solve(A1, rhs_u)
 	v_star = np.linalg.solve(A1, rhs_v)
 	# Pressure correction
-	lhsPressure_x = np.dot(Dx, Gx)
-	lhsPressure_y = np.dot(Dy, Gy)
+	lhsPressure_x = dt*np.dot(Dx, Gx)
+	lhsPressure_y = dt*np.dot(Dy, Gy)
 	rhsPressure_u = np.dot(Dx, u_star)
 	rhsPressure_v = np.dot(Dy, v_star)
 	lhsPressure = lhsPressure_x + lhsPressure_y
@@ -65,7 +65,7 @@ def solve(data, Dx, Dy, L, Gx, Gy, Re, dt):
 	# Update velocity and pressure
 	GPx = np.dot(Gx, P_tild)
 	GPy = np.dot(Gy, P_tild)
-	data.u_vel = u_star - dt*GPx
-	data.v_vel = v_star - dt*GPy
+	data.u_vel = u_star - 0.5*dt*GPx
+	data.v_vel = v_star - 0.5*dt*GPy
 	data.press = data.press + P_tild
 	return data
