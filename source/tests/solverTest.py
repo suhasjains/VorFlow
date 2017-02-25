@@ -14,16 +14,16 @@ dt = 0.1
 Tend = 1.
 Re = 1000.
 
-#mesh = Mesh(N,L_x,L_y,np.zeros(4),'cartesian')
-mesh = Mesh(N,L_x,L_y,np.ones(4),'cartesian')
+mesh = Mesh(N,L_x,L_y,np.zeros(4),'cartesian')
+#mesh = Mesh(N,L_x,L_y,np.ones(4),'cartesian')
 
 data = Data(N);
 
 for i in range(N):
 		data.u_vel[i] = 1.
 		data.v_vel[i] = 1.
-		#data.press[i] = np.exp(-((mesh.site[i,0]-L_x/2)**2 + (mesh.site[i,1]-L_y/2)**2))
-		data.press[i] = 0.5
+		data.press[i] = np.exp(-((mesh.site[i,0]-L_x/2)**2 + (mesh.site[i,1]-L_y/2)**2))
+		#data.press[i] = 0.5
 #D = np.zeros((N,N))
 #Dx = np.zeros((N,N))
 #Dy = np.zeros((N,N))
