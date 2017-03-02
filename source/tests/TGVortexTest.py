@@ -7,13 +7,14 @@ from solver import *
 
 
 #N = 100
-N = 64
+N = 1024
 L_x = 2.*np.pi
 L_y = 2.*np.pi
-dt = 0.1
-Tend = 3.
+dt = 0.01
+Tend = 1.
 nu = 0.1
-Re = 1.*L_x / nu
+rho = 1.0
+#Re = 1.*L_x / nu
 
 mesh = Mesh(N,L_x,L_y,np.zeros(4),'cartesian')
 #mesh = Mesh(N,L_x,L_y,np.ones(4),'cartesian')
@@ -21,10 +22,10 @@ mesh = Mesh(N,L_x,L_y,np.zeros(4),'cartesian')
 data = Data(N);
 
 for i in range(N):
-		data.u_vel[i] = np.sin(mesh.centroid[i][0])*np.cos(mesh.site[i][1])
+		data.u_vel[i] = np.sin(mesh.centroid[i][0])*np.cos(mesh.centroid[i][1])
 		data.v_vel[i] = -np.cos(mesh.centroid[i][0])*np.sin(mesh.centroid[i][1])
 		#data.press[i] = np.exp(-((mesh.site[i,0]-L_x/2)**2 + (mesh.site[i,1]-L_y/2)**2))
-		data.press[i] = (np.cos(mesh.centroid[i][0]*2.)+np.cos(mesh.centroid[i][1]*2.))/4.
+		data.press[i] = (np.cos(mesh.centroid[i][0]*2.)+np.cos(mesh.centroid[i][1]*2.))/16.
 u0 = data.u_vel
 v0 = data.v_vel
 P0 = data.press
@@ -35,6 +36,7 @@ for i in range(0, N):
         y0[i] = mesh.centroid[i][1]
 t = 0.
 #plt.ion()
+data_old = data
 while t < Tend:
                 #for i in range(N):
                         #data.u_vel[i] = -np.sin(2.*np.pi/L_y * (mesh.centroid[i][1] - L_y/2.))
@@ -43,11 +45,12 @@ while t < Tend:
                         #data.v_vel[i] = (mesh.centroid[i][0] - L_x/2.)/L_x
                         #data.press[i] = mesh.area[i]/(2.*(L_x*L_y)/N)
 		Dx, Dy, L, Gx, Gy = time_step(mesh)
-		data = solve(data, Dx, Dy, L, Gx, Gy, Re, dt)
+		data = solve(data_old, Dx, Dy, L, Gx, Gy, dt, nu)
                 mesh.update_mesh(data, dt)
                 #plot_mesh(mesh);
                 #make_frame(mesh,data.press,'Area')
                 #plt.pause(0.005)
+		data_old = data
                 t += dt
 
 # Plot solution
