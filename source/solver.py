@@ -25,7 +25,7 @@ def time_step(mesh):
 			k = mesh.neighbor[i][j]
 			mfac = mesh.face[i][j]
 			mlen = np.sqrt(mesh.length[i][j,0]**2 + mesh.length[i][j,1]**2)
-			coeff = mfac/mlen
+			coeff = mfac/mlen/mesh.area[i]
 			# Div, x
 			Dx[i][k] += coeff*(mesh.length[i][j,0]-mesh.face_center[i][j,0])
 			# Div, y
