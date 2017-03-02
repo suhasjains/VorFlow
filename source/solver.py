@@ -43,32 +43,54 @@ def time_step(mesh):
 			
 
 def solve(data, Dx, Dy, L, Gx, Gy, dt, nu):
-	# Solution for u by pressure projection
-	n = len(data.u_vel)
-	I = np.identity((n))
-	# Implicit projection method
-	# Solve for u_star
-	A1 = I - nu*dt*L/(2.)
-	A2 = I + nu*dt*L/(2.)
-	rhs_u = -0.5*dt*np.dot(Gx, data.press) + np.dot(A2, data.u_vel)
-	rhs_v = -0.5*dt*np.dot(Gy, data.press) + np.dot(A2, data.v_vel)
-	u_star = np.linalg.solve(A1, rhs_u)
-	v_star = np.linalg.solve(A1, rhs_v)
-	# Vel star star
-	u_star_star = u_star + dt*0.5*np.dot(Gx, data.press)
-	v_star_star = v_star + dt*0.5*np.dot(Gy, data.press)
-	# Pressure correction
-	lhsPressure_x = dt*np.dot(Dx, Gx)
-	lhsPressure_y = dt*np.dot(Dy, Gy)
-	rhsPressure_u = 2.*np.dot(Dx, u_star_star)
-	rhsPressure_v = 2.*np.dot(Dy, v_star_star)
-	lhsPressure = lhsPressure_x + lhsPressure_y
-	rhsPressure = rhsPressure_u + rhsPressure_v
-	P_tild, res, ra, s = np.linalg.lstsq(lhsPressure, rhsPressure)
-	# Update velocity and pressure
-	GPx = np.dot(Gx, P_tild)
-	GPy = np.dot(Gy, P_tild)
-	data.u_vel = u_star_star - 0.5*dt*GPx
-	data.v_vel = v_star_star - 0.5*dt*GPy
-	data.press = P_tild
+	solver_type = 'explicit'
+	if (solver_type == 'proj'):
+		# Solution for u by pressure projection
+		n = len(data.u_vel)
+		I = np.identity((n))
+		# Implicit projection method
+		# Solve for u_star
+		A1 = I - nu*dt*L/(2.)
+		A2 = I + nu*dt*L/(2.)
+		rhs_u = -0.5*dt*np.dot(Gx, data.press) + np.dot(A2, data.u_vel)
+		rhs_v = -0.5*dt*np.dot(Gy, data.press) + np.dot(A2, data.v_vel)
+		u_star = np.linalg.solve(A1, rhs_u)
+		v_star = np.linalg.solve(A1, rhs_v)
+		# Vel star star
+		u_star_star = u_star + dt*0.5*np.dot(Gx, data.press)
+		v_star_star = v_star + dt*0.5*np.dot(Gy, data.press)
+		# Pressure correction
+		lhsPressure_x = dt*np.dot(Dx, Gx)
+		lhsPressure_y = dt*np.dot(Dy, Gy)
+		rhsPressure_u = 2.*np.dot(Dx, u_star_star)
+		rhsPressure_v = 2.*np.dot(Dy, v_star_star)
+		lhsPressure = lhsPressure_x + lhsPressure_y
+		rhsPressure = rhsPressure_u + rhsPressure_v
+		P_tild, res, ra, s = np.linalg.lstsq(lhsPressure, rhsPressure)
+		# Update velocity and pressure
+		GPx = np.dot(Gx, P_tild)
+		GPy = np.dot(Gy, P_tild)
+		data.u_vel = u_star_star - 0.5*dt*GPx
+		data.v_vel = v_star_star - 0.5*dt*GPy
+		data.press = P_tild
+	elif (solver_type == 'explicit'):
+		# Solution for u by pressure projection
+                n = len(data.u_vel)
+                I = np.identity((n))
+		# Explicit
+	 	# Pressure correction
+                lhsPressure_x = np.dot(Dx, Gx)
+                lhsPressure_y = np.dot(Dy, Gy)
+                rhsPressure_u = np.dot(Dx, data.u_vel)
+                rhsPressure_v = np.dot(Dy, data.v_vel)
+                lhsPressure = lhsPressure_x + lhsPressure_y
+                rhsPressure = rhsPressure_u + rhsPressure_v
+                P_tild, res, ra, s = np.linalg.lstsq(lhsPressure, rhsPressure)
+                # Solve for u_star
+                A2 = nu*dt*L/(2.)
+                rhs_u = -dt*np.dot(Gx, data.press) + dt*np.dot(A2, data.u_vel)
+                rhs_v = -dt*np.dot(Gy, data.press) + dt*np.dot(A2, data.v_vel)
+                data.u_vel = data.u_vel + rhs_u
+		data.v_vel = data.v_vel + rhs_v
+		data.press = P_tild
 	return data
