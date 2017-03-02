@@ -190,9 +190,28 @@ class Mesh:
 				
 				
 				# GradArea
+				for i in range(self.N):
+						self.grad_area[i] = np.zeros((self.N_neighbor[i]+1,2));
+						for j in range(self.N_neighbor[i]):
+								X = self.site[j,:];
+								Y = tiled_site[self.neighbor[i][j],:]; # Must be the periodic extension for the distances to work out
+								XY = np.sqrt(np.sum(np.square(Y-X)));
+								T = 0.5 * (X + Y) - self.face_center[i][j,:]; # Tangent vector
+								self.grad_area[i][j,:] = self.face[i][j] * (0.5*(Y - X) + T) / XY
 				
 				
 				# GradAreaT
+				for i in range(self.N):
+						self.grad_area_t[i] = np.zeros((self.N_neighbor[i]+1,2));
+						for j in range(self.N_neighbor[i]):
+								neighbor_j = self.neighbor[i][j]%self.N; # Absolute index of the jth neighbour to i (Note wraps around)
+								relative_i = np.where(self.neighbor[neighbor_j]%self.N == i)[0][0]; # Relative neighbour index of i from cell j
+								self.grad_area_t[i][j,:] = self.grad_area[neighbor_j][relative_i,:];
+						
+						for j in range(self.N_neighbor[i]): # Find dAi/dXi (Self)
+								self.grad_area_t[i][-1,:] -= self.grad_area[i][j,:];
+						
+						self.grad_area[i][-1,:] = self.grad_area_t[i][-1,:];
 
 
 				# isBoundary
