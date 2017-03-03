@@ -23,20 +23,25 @@ def time_step(mesh):
 		#print "N",mesh.face[i]
 		for j in range(mesh.N_neighbor[i]):
 			k = mesh.neighbor[i][j]
+			# Comment out first, don't delete
 			mfac = mesh.face[i][j]
 			mlen = np.sqrt(mesh.length[i][j,0]**2 + mesh.length[i][j,1]**2)
 			coeff = mfac/mlen/mesh.area[i]
 			# Div, x
 			Dx[i][k] += coeff*(mesh.length[i][j,0]-mesh.face_center[i][j,0])
+			Dx[i][i] -= coeff*(mesh.length[i][j,0]-mesh.face_center[i][j,0])
 			# Div, y
 			Dy[i][k] += coeff*(mesh.length[i][j,1]-mesh.face_center[i][j,1])
+			Dy[i][i] -= coeff*(mesh.length[i][j,1]-mesh.face_center[i][j,1])
 			# Laplacian
 			L[i][k] += coeff
 			L[i][i] -= coeff
 			# Grad, x
 			Gx[i][k] += coeff*mesh.face_center[i][j,0]
+			Gx[i][i] -= coeff*mesh.face_center[i][j,0]
 			# Grad, y
 			Gy[i][k] += coeff*mesh.face_center[i][j,1]
+			Gy[i][i] -= coeff*mesh.face_center[i][j,1]
 			## Potential new matrices
 			#mlen = np.sqrt(np.sum(np.square(mesh.length[i][j])))
 			## Div, x
