@@ -23,20 +23,42 @@ def time_step(mesh):
 		#print "N",mesh.face[i]
 		for j in range(mesh.N_neighbor[i]):
 			k = mesh.neighbor[i][j]
+			# Comment out first, don't delete
 			mfac = mesh.face[i][j]
 			mlen = np.sqrt(mesh.length[i][j,0]**2 + mesh.length[i][j,1]**2)
 			coeff = mfac/mlen/mesh.area[i]
 			# Div, x
 			Dx[i][k] += coeff*(mesh.length[i][j,0]-mesh.face_center[i][j,0])
+			Dx[i][i] -= coeff*(mesh.length[i][j,0]-mesh.face_center[i][j,0])
 			# Div, y
 			Dy[i][k] += coeff*(mesh.length[i][j,1]-mesh.face_center[i][j,1])
+			Dy[i][i] -= coeff*(mesh.length[i][j,1]-mesh.face_center[i][j,1])
 			# Laplacian
 			L[i][k] += coeff
 			L[i][i] -= coeff
 			# Grad, x
 			Gx[i][k] += coeff*mesh.face_center[i][j,0]
+			Gx[i][i] -= coeff*mesh.face_center[i][j,0]
 			# Grad, y
 			Gy[i][k] += coeff*mesh.face_center[i][j,1]
+			Gy[i][i] -= coeff*mesh.face_center[i][j,1]
+			## Potential new matrices
+			#mlen = np.sqrt(np.sum(np.square(mesh.length[i][j])))
+			## Div, x
+			#Dx[i][k] += mesh.grad_area[i][j][0] / mesh.area[i]
+			## Div, y
+			#Dy[i][k] += mesh.grad_area[i][j][1] / mesh.area[i]
+			## Laplacian
+			#L[i][k] += mesh.face[i][j]/mlen/mesh.area[i]
+			#L[i][i] -= mesh.face[i][j]/mlen/mesh.area[i]
+			## Grad, x
+			#Gx[i][k] -= mesh.grad_area_t[i][j][0] / mesh.area[i]
+			## Grad, y
+			#Gy[i][k] -= mesh.grad_area_t[i][j][1] / mesh.area[i]
+		#Dx[i][i] += mesh.grad_area[i][-1][0] / mesh.area[i]
+		#Dy[i][i] += mesh.grad_area[i][-1][1] / mesh.area[i]
+		#Gx[i][i] -= mesh.grad_area_t[i][-1][0] / mesh.area[i]
+		#Gy[i][i] -= mesh.grad_area_t[i][-1][1] / mesh.area[i]
 	# If periodic, connectivity handled in mesh.py
 	# If Dirichlet or Neumann, adjust BCs (to be done? if they are not handled by mesh.py)
 	return Dx, Dy, L, Gx, Gy
