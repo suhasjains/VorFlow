@@ -6,12 +6,12 @@ from plotting import *
 from solver import *
 
 
-N = 100
+N = 64
 L_x = 1.
 L_y = 1.
 dt = 0.01
 Tend = 1.
-nu = 0.01
+nu = 1.
 rho = 1.
 
 mesh = Mesh(N,L_x,L_y,np.zeros(4),'random')
