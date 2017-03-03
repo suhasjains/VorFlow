@@ -77,19 +77,24 @@ def solve(data, Dx, Dy, L, Gx, Gy, dt, nu):
 		# Solution for u by pressure projection
                 n = len(data.u_vel)
                 I = np.identity((n))
+		A1 = nu*L
 		# Explicit
 	 	# Pressure correction
                 lhsPressure_x = np.dot(Dx, Gx)
                 lhsPressure_y = np.dot(Dy, Gy)
-                rhsPressure_u = np.dot(Dx, data.u_vel)
-                rhsPressure_v = np.dot(Dy, data.v_vel)
+		Hx = np.dot(A1, data.u_vel)
+		Hy = np.dot(A1, data.v_vel)
+                rhsPressure_u = np.dot(Dx, Hx)
+                rhsPressure_v = np.dot(Dy, Hy)
                 lhsPressure = lhsPressure_x + lhsPressure_y
                 rhsPressure = rhsPressure_u + rhsPressure_v
                 P_tild, res, ra, s = np.linalg.lstsq(lhsPressure, rhsPressure)
-                # Solve for u_star
-                A2 = nu*dt*L/(2.)
-                rhs_u = -dt*np.dot(Gx, data.press) + dt*np.dot(A2, data.u_vel)
-                rhs_v = -dt*np.dot(Gy, data.press) + dt*np.dot(A2, data.v_vel)
+                #P_tild = np.linalg.solve(lhsPressure, rhsPressure)
+		res_norm = np.linalg.norm(res)
+		#print(res_norm)
+		# Solve for u_star
+                rhs_u = -dt*np.dot(Gx, data.press) + dt*np.dot(A1, data.u_vel)
+                rhs_v = -dt*np.dot(Gy, data.press) + dt*np.dot(A1, data.v_vel)
                 data.u_vel = data.u_vel + rhs_u
 		data.v_vel = data.v_vel + rhs_v
 		data.press = P_tild

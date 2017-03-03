@@ -7,7 +7,7 @@ from solver import *
 
 
 #N = 100
-N = 1024
+N = 40**2
 L_x = 2.*np.pi
 L_y = 2.*np.pi
 dt = 0.001
