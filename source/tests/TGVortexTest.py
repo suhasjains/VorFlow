@@ -7,11 +7,11 @@ from solver import *
 
 
 #N = 100
-N = 40**2
+N = 20**2
 L_x = 2.*np.pi
 L_y = 2.*np.pi
-dt = 0.001
-Tend = 0.1
+dt = 0.01
+Tend = 1.
 nu = 0.1
 rho = 1.0
 #Re = 1.*L_x / nu
