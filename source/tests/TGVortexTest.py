@@ -36,7 +36,7 @@ while t < Tend:
 
 u_exact = np.zeros(N);
 for i in range(N):
-	u_exact[i] = np.sin(mesh.centroid[i][0])*np.cos(mesh.centroid[i][1])
+	u_exact[i] = np.sin(mesh.centroid[i][0])*np.cos(mesh.centroid[i][1])* np.exp(-2.*nu*Tend)
 
 print 'Error = '+str(np.sqrt(np.sum(np.dot(np.square(data.u_vel - u_exact),mesh.area))))
 #make_frame(mesh,data.u_vel,'u_final')
