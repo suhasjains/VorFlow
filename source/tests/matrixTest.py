@@ -5,7 +5,7 @@ import timeit
 from mesh import *
 from solver import *
 
-N1 = 5
+N1 = 3
 N = N1**2 
 L_x = 3.
 L_y = 3.
@@ -52,9 +52,9 @@ print 'matrices built in',toc-tic,'seconds'
 #print mesh.site[:,1]
 #print data.u_vel
 #print data.v_vel
-print np.dot(Dx,data.u_vel)
+#print np.dot(Dx,data.u_vel)
 #print Dx
-print np.dot(Dy,data.v_vel)
+#print np.dot(Dy,data.v_vel)
 #print Dy
 #print L
 #print data.press
@@ -62,8 +62,8 @@ print np.dot(Dy,data.v_vel)
 #print np.dot(L,data.press)+4.0*np.pi*np.pi/L_x/L_x*data.press
 #print np.linalg.norm(np.dot(L,data.press)+4.0*np.pi*np.pi*kx*kx/L_x/L_x*data.press)
 #print np.linalg.norm(np.dot(L,data.press)+(4.0*np.pi*np.pi*kx*kx/L_x/L_x+4.0*np.pi*np.pi*ky*ky/L_y/L_y)*data.press)
-print np.dot(Gx,data.press)
-#print Dx
-#print Dy
+#print np.dot(Gx,data.press)
+print Dx
+print Dy
 #print Gx
 #print Gy
