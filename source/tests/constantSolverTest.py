@@ -7,9 +7,9 @@ from solver import *
 
 
 N = 100
-L_x = 1.
-L_y = 1.
-dt = 0.01
+L_x = 2.*np.pi
+L_y = 2.*np.pi
+dt = 0.1
 Tend = 1.
 nu = 0.01
 rho = 1.
@@ -27,10 +27,10 @@ t = 0.
 plt.ion()
 make_frame(mesh,data.u_vel**2 + data.v_vel**2,'Energy')
 while t < Tend:
-		Dx, Dy, L, Gx, Gy = time_step(mesh)
-		data = solve(data, Dx, Dy, L, Gx, Gy, dt, nu)
-		mesh.update_mesh(data, dt)
+		data = time_step(mesh,data,dt,nu)
 		make_frame(mesh,data.u_vel**2 + data.v_vel**2,'Energy')
+		mesh.update_mesh(data, dt)
 		plt.pause(0.005)
 		t += dt
+
 

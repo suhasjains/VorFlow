@@ -197,10 +197,10 @@ class Mesh:
 				for i in range(self.N):
 						self.grad_area[i] = np.zeros((self.N_neighbor[i]+1,2));
 						for j in range(self.N_neighbor[i]):
-								X = self.site[j,:];
+								X = self.site[i,:];
 								Y = tiled_site[self.neighbor[i][j],:]; # Must be the periodic extension for the distances to work out
 								XY = np.sqrt(np.sum(np.square(Y-X))) + 1.e-16;
-								T = 0.5 * (X + Y) - self.face_center[i][j,:]; # Tangent vector
+								T = 0.5 * (X + Y) - X - self.face_center[i][j,:]; # Tangent vector
 								self.grad_area[i][j,:] = self.face[i][j] * (0.5*(Y - X) + T) / XY
 				
 				
