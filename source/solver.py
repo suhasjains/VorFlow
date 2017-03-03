@@ -82,9 +82,14 @@ def solve(data, Dx, Dy, L, Gx, Gy, dt, nu):
 	 	# Pressure correction
                 lhsPressure_x = np.dot(Dx, Gx)
                 lhsPressure_y = np.dot(Dy, Gy)
-		Hx = np.dot(A1, data.u_vel)
-		Hy = np.dot(A1, data.v_vel)
-                rhsPressure_u = np.dot(Dx, Hx)
+		Hx = np.dot(A1, data.u_vel) - np.multiply(data.u_vel, np.dot(Dx, data.u_vel)) - np.multiply(data.v_vel, np.dot(Dy, data.u_vel))
+		Hy = np.dot(A1, data.v_vel) - np.multiply(data.u_vel, np.dot(Dx, data.v_vel)) - np.multiply(data.v_vel, np.dot(Dy, data.v_vel))
+		#print(len(Hx))
+		#print(len(data.u_vel))
+		#Hx = np.multiply(Hx, data.u_vel)
+		#Hy = np.multiply(Hy, data.v_vel)
+                #print(len(Hx))
+		rhsPressure_u = np.dot(Dx, Hx)
                 rhsPressure_v = np.dot(Dy, Hy)
                 lhsPressure = lhsPressure_x + lhsPressure_y
                 rhsPressure = rhsPressure_u + rhsPressure_v
@@ -93,8 +98,8 @@ def solve(data, Dx, Dy, L, Gx, Gy, dt, nu):
 		res_norm = np.linalg.norm(res)
 		#print(res_norm)
 		# Solve for u_star
-                rhs_u = -dt*np.dot(Gx, data.press) + dt*np.dot(A1, data.u_vel)
-                rhs_v = -dt*np.dot(Gy, data.press) + dt*np.dot(A1, data.v_vel)
+                rhs_u = -dt*np.dot(Gx, data.press) + dt*Hx
+                rhs_v = -dt*np.dot(Gy, data.press) + dt*Hy
                 data.u_vel = data.u_vel + rhs_u
 		data.v_vel = data.v_vel + rhs_v
 		data.press = P_tild
