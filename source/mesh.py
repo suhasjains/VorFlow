@@ -199,7 +199,7 @@ class Mesh:
 						for j in range(self.N_neighbor[i]):
 								X = self.site[i,:];
 								Y = tiled_site[self.neighbor[i][j],:]; # Must be the periodic extension for the distances to work out
-								XY = np.sqrt(np.sum(np.square(Y-X))) + 1.e-16;
+								XY = np.sqrt(np.sum(np.square(Y-X)));
 								T = 0.5 * (X + Y) - X - self.face_center[i][j,:]; # Tangent vector
 								self.grad_area[i][j,:] = self.face[i][j] * (0.5*(Y - X) + T) / XY
 				
