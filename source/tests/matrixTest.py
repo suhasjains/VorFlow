@@ -5,7 +5,7 @@ import timeit
 from mesh import *
 from solver import *
 
-N1 = 300
+N1 = 3
 N = N1**2 
 L_x = 3.
 L_y = 3.
@@ -31,9 +31,9 @@ for i in range(N):
 		#data.v_vel[i] = mesh.site[i,1]*3 #Dy test2
 		#data.press[i] = 1. #L test1
 		#data.press[i] = np.cos(kx*2.0*np.pi*mesh.site[i,0]/L_x) #L test2
-		data.press[i] = np.cos(kx*2.0*np.pi*mesh.site[i,0]/L_x)*np.cos(ky*2.0*np.pi*mesh.site[i,1]/L_y) #L test3
+		#data.press[i] = np.cos(kx*2.0*np.pi*mesh.site[i,0]/L_x)*np.cos(ky*2.0*np.pi*mesh.site[i,1]/L_y) #L test3
 		#data.press[i] = 1. #G test1
-		#data.press[i] = mesh.site[i,0] #G test2
+		data.press[i] = mesh.site[i,0] #G test2
 #D = np.zeros((N,N))
 #Dx = np.zeros((N,N))
 #Dy = np.zeros((N,N))
@@ -59,5 +59,9 @@ print 'matrices built in',toc-tic,'seconds'
 #print np.dot(L,data.press)
 #print np.dot(L,data.press)+4.0*np.pi*np.pi/L_x/L_x*data.press
 #print np.linalg.norm(np.dot(L,data.press)+4.0*np.pi*np.pi*kx*kx/L_x/L_x*data.press)
-print np.linalg.norm(np.dot(L,data.press)+(4.0*np.pi*np.pi*kx*kx/L_x/L_x+4.0*np.pi*np.pi*ky*ky/L_y/L_y)*data.press)
-#print np.dot(Gx,data.press)
+#print np.linalg.norm(np.dot(L,data.press)+(4.0*np.pi*np.pi*kx*kx/L_x/L_x+4.0*np.pi*np.pi*ky*ky/L_y/L_y)*data.press)
+print np.dot(Gx,data.press)
+#print Dx
+#print Dy
+#print Gx
+#print Gy

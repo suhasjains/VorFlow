@@ -65,6 +65,9 @@ class Mesh:
 				
 
 		def update_mesh(self,data,dt):
+				# Ensure data is valid
+				if np.any(np.abs(data.u_vel) > 1.e16) or np.any(np.abs(data.v_vel) > 1.e16):
+						raise ValueError("Do you really think this flow is incompressible? Really? It's pretty fast FYI.")	
 				# Forward Euler advance data by dt
 				for i in range(self.N):
 						self.site[i,0] = self.site[i,0] + dt * data.u_vel[i];
@@ -195,7 +198,7 @@ class Mesh:
 						for j in range(self.N_neighbor[i]):
 								X = self.site[j,:];
 								Y = tiled_site[self.neighbor[i][j],:]; # Must be the periodic extension for the distances to work out
-								XY = np.sqrt(np.sum(np.square(Y-X)));
+								XY = np.sqrt(np.sum(np.square(Y-X))) + 1.e-16;
 								T = 0.5 * (X + Y) - self.face_center[i][j,:]; # Tangent vector
 								self.grad_area[i][j,:] = self.face[i][j] * (0.5*(Y - X) + T) / XY
 				
