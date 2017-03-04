@@ -22,22 +22,21 @@ data = Data(N);
 for i in range(N):
 		data.u_vel[i] = 0.5
 		data.v_vel[i] = 0.5
-		data.press[i] = 0.5
 
 t = 0.
 plt.ion()
 ax = plt.gca()
-centroid0 = mesh.centroid.copy()
-make_frame(mesh,data.u_vel**2 + data.v_vel**2,'Energy',ax,True)
+site0 = mesh.site.copy()
+plot_mesh(mesh,ax)
 while t < Tend:
 		data = time_step(mesh,data,dt,nu)
-		make_frame(mesh,data.u_vel**2 + data.v_vel**2,'Energy',ax,True)
-		plt.pause(0.005)
+		plot_mesh(mesh,ax)
 		t += dt
-		dx = np.zeros((N,2))
-		dx[:,0] = data.u_vel*t
-		dx[:,1] = data.v_vel*t
+		x_exact = np.zeros((N,2))
+		x_exact[:,0] = (data.u_vel*t + site0[:,0])%L_x
+		x_exact[:,1] = (data.v_vel*t + site0[:,1])%L_y
 		mesh.update_mesh(data, dt)
-		print 'error:',np.linalg.norm((mesh.centroid-(centroid0+dx))/N)
+		print 'error:',np.linalg.norm((mesh.site-x_exact)/N)
+
 
 
