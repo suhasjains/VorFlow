@@ -6,9 +6,14 @@ from scipy.spatial import voronoi_plot_2d
 
 
 
-def plot_mesh(mesh):
-		# Plots just the mesh
-		voronoi_plot_2d(mesh.voronoi)
+def plot_mesh(mesh,ax):
+		## Plots just the mesh
+		
+		# Remove previous plot
+		ax.clear()
+		# Scipy Plot --
+		voronoi_plot_2d(mesh.voronoi,ax)
+		
 		plt.xlabel(r'$x$')
 		plt.ylabel(r'$y$')
 		plt.title('Voronoi Mesh')
@@ -16,13 +21,15 @@ def plot_mesh(mesh):
 		plt.xlim([0.,mesh.L_x])
 		plt.ylim([0.,mesh.L_y])
 		plt.show()
+		plt.pause(1e-6)
 
 
 def make_frame(mesh,field,name,ax,plotMesh=False):
+		## Plots the mesh and colours
+		
 		# Remove previous plot
-		if ax.lines != []:
-			ax.lines = []
-		# Plots the mesh and colours
+		ax.clear()
+		
 		if plotMesh: voronoi_plot_2d(mesh.voronoi,ax)
 		cmap = cm.get_cmap('RdBu')
 		for i in range(mesh.N):
@@ -30,10 +37,7 @@ def make_frame(mesh,field,name,ax,plotMesh=False):
 				region_vertex_index = mesh.voronoi.regions[region_index]
 				if not -1 in region_vertex_index:
 						polygon = [mesh.voronoi.vertices[k] for k in region_vertex_index]
-						if mpl.__version__ == '1.3.1':
-							plt.fill(*zip(*polygon),color=cmap(field[i%mesh.N])) # Colours in the ith polygon with corresponding colour data from cmap(field)
-						else:
-							plt.fill(*zip(*polygon),c=cmap(field[i%mesh.N])) # Colours in the ith polygon with corresponding colour data from cmap(field)
+						plt.fill(*zip(*polygon),color=cmap(field[i%mesh.N])) # Colours in the ith polygon with corresponding colour data from cmap(field)
 		
 		plt.xlabel(r'$x$')
 		plt.ylabel(r'$y$')
@@ -42,3 +46,4 @@ def make_frame(mesh,field,name,ax,plotMesh=False):
 		plt.xlim([0.,mesh.L_x])
 		plt.ylim([0.,mesh.L_y])
 		plt.show()
+		plt.pause(1e-6)
