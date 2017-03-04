@@ -27,6 +27,7 @@ for i in range(N):
 t = 0.
 plt.ion()
 ax = plt.gca()
+centroid0 = mesh.centroid
 make_frame(mesh,data.u_vel**2 + data.v_vel**2,'Energy',ax)
 while t < Tend:
 		Dx, Dy, L, Gx, Gy = time_step(mesh)
@@ -35,4 +36,8 @@ while t < Tend:
 		make_frame(mesh,data.u_vel**2 + data.v_vel**2,'Energy',ax)
 		plt.pause(0.005)
 		t += dt
+		dx = np.zeros((N,2))
+		dx[:,0] = data.u_vel*t
+		dx[:,1] = data.v_vel*t
+		print np.linalg.norm((mesh.centroid-(centroid0+dx))/N)
 
