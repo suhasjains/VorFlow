@@ -21,7 +21,7 @@ def plot_mesh(mesh,ax):
 		plt.xlim([0.,mesh.L_x])
 		plt.ylim([0.,mesh.L_y])
 		plt.show()
-		plt.pause(1e-6)
+		plt.pause(5)
 
 
 def make_frame(mesh,field,name,ax,plotMesh=False):
