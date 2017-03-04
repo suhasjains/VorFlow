@@ -2,7 +2,6 @@ import numpy as np
 import matplotlib as mpl
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
-import matplotlib.animation as animation
 from scipy.spatial import voronoi_plot_2d
 
 
@@ -19,14 +18,14 @@ def plot_mesh(mesh):
 		plt.show()
 
 
-def make_frame(mesh,field,name,ax):
+def make_frame(mesh,field,name,ax,plotMesh=False):
 		# Remove previous plot
 		if ax.lines != []:
 			ax.lines = []
 		# Plots the mesh and colours
-		voronoi_plot_2d(mesh.voronoi,ax)
+		if plotMesh: voronoi_plot_2d(mesh.voronoi)
 		cmap = cm.get_cmap('RdBu')
-		for i in range(9*mesh.N):
+		for i in range(mesh.N):
 				region_index = mesh.voronoi.point_region[i] # Index of Voronoi region corresponding to site i
 				region_vertex_index = mesh.voronoi.regions[region_index]
 				if not -1 in region_vertex_index:

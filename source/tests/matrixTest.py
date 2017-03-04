@@ -5,7 +5,7 @@ import timeit
 from mesh import *
 from solver import *
 
-N1 = 40
+N1 = 20
 N = N1**2 
 L_x = 3.
 L_y = 3.
@@ -15,7 +15,6 @@ Re = 1000.
 
 tic=timeit.default_timer()
 mesh = Mesh(N,L_x,L_y,np.zeros(4),'cartesian')
-#mesh = Mesh(N,L_x,L_y,np.ones(4),'cartesian')
 toc=timeit.default_timer()
 print 'meshing done in',toc-tic,'seconds'
 
@@ -26,12 +25,12 @@ ky = 1.
 tic=timeit.default_timer()
 for i in range(N):
 		#data.u_vel[i] = 1. #Dx test1
-		#data.u_vel[i] = mesh.site[i,0] #Dx test2
+		data.u_vel[i] = mesh.site[i,0] #Dx test2
 		#data.v_vel[i] = 1. #Dy test1
-		#data.v_vel[i] = mesh.site[i,1]*3 #Dy test2
+		data.v_vel[i] = mesh.site[i,1]*3 #Dy test2
 		#data.press[i] = 1. #L test1
 		#data.press[i] = np.cos(kx*2.0*np.pi*mesh.site[i,0]/L_x) #L test2
-		data.press[i] = np.cos(kx*2.0*np.pi*mesh.site[i,0]/L_x)*np.cos(ky*2.0*np.pi*mesh.site[i,1]/L_y) #L test3
+		#data.press[i] = np.cos(kx*2.0*np.pi*mesh.site[i,0]/L_x)*np.cos(ky*2.0*np.pi*mesh.site[i,1]/L_y) #L test3
 		#data.press[i] = 1. #G test1
 		#data.press[i] = mesh.site[i,0] #G test2
 #D = np.zeros((N,N))
@@ -41,7 +40,7 @@ for i in range(N):
 #Gx = np.zeros((N,N))
 #Gy = np.zeros((N,N))
 #G = np.zeros((N,N))
-Dx, Dy, L, Gx, Gy = time_step(mesh)
+Dx, Dy, L, Gx, Gy = build_matrices(mesh)
 toc=timeit.default_timer()
 print 'matrices built in',toc-tic,'seconds'
 

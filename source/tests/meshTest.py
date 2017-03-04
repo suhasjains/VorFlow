@@ -29,7 +29,7 @@ while t < Tend:
 
                 mesh.update_mesh(data,dt)
 		#plot_mesh(mesh);
-		make_frame(mesh,data.press,'Area',ax)
+		make_frame(mesh,data.press,'Area',ax,True)
 		plt.pause(0.005)
 		t += dt
 
