@@ -6,12 +6,12 @@ from plotting import *
 from solver import *
 
 
-N = 40**2
+N = 20**2
 L_x = 2.*np.pi
 L_y = 2.*np.pi
-dt = 0.01
+dt = 0.1
 Tend = 0.1
-nu = 0.001
+nu = 0.1
 rho = 1.
 
 mesh = Mesh(N,L_x,L_y,np.zeros(4),'random')
@@ -39,6 +39,9 @@ for i in range(N):
 	u_exact[i] = np.sin(mesh.centroid[i][0])*np.cos(mesh.centroid[i][1])* np.exp(-2.*nu*Tend)
 
 print 'Error = '+str(np.sqrt(np.sum(np.dot(np.square(data.u_vel - u_exact),mesh.area))))
-#make_frame(mesh,data.u_vel,'u_final')
+make_frame(mesh,data.u_vel,'u_final')
 #make_frame(mesh,u_exact,'u_exact')
-make_frame(mesh,data.u_vel - u_exact,'Error')
+#make_frame(mesh,data.u_vel - u_exact,'Error')
+
+
+
