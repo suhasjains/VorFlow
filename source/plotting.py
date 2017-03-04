@@ -22,6 +22,8 @@ def make_frame(mesh,field,name,ax,plotMesh=False):
 		# Remove previous plot
 		if ax.lines != []:
 			ax.lines = []
+		if ax.collections != []:
+			ax.collections = []
 		# Plots the mesh and colours
 		if plotMesh: voronoi_plot_2d(mesh.voronoi,ax)
 		cmap = cm.get_cmap('RdBu')
