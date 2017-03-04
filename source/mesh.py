@@ -1,4 +1,5 @@
 import numpy as np
+import timeit
 from scipy.spatial import *
 
 class Mesh:
@@ -92,6 +93,9 @@ class Mesh:
 
 		def generate_mesh(self):
 				# Extend periodic domain
+				
+				tic = timeit.default_timer()
+				
 				if self.is_periodic:
 						# Tile the sites -- NOTE: This is very inefficient! Later try using just a few critical edge sites.
 						# However, this will require rewriting the periodic connectivity algorithm. (AW)
@@ -124,6 +128,10 @@ class Mesh:
 				
 				self.voronoi = voronoi; # Store for use later when plotting
 				
+				toc = timeit.default_timer()
+				print 'Scipy meshing: '+str(toc-tic)+' s'
+				
+				tic = timeit.default_timer()
 
 				# Set the connectivity
 				for i in range(self.N):
@@ -231,7 +239,8 @@ class Mesh:
 
 
 		
-
+				toc = timeit.default_timer()
+				print 'Mesh Properties: '+str(toc-tic)+' s'
 
 
 

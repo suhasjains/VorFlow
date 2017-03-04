@@ -6,7 +6,7 @@ from plotting import *
 from solver import *
 
 
-N = 20**2
+N = 80**2
 L_x = 2.*np.pi
 L_y = 2.*np.pi
 dt = 0.1
