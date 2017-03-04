@@ -27,17 +27,17 @@ for i in range(N):
 t = 0.
 plt.ion()
 ax = plt.gca()
-centroid0 = mesh.centroid
-make_frame(mesh,data.u_vel**2 + data.v_vel**2,'Energy',ax)
+centroid0 = mesh.centroid.copy()
+make_frame(mesh,data.u_vel**2 + data.v_vel**2,'Energy',ax,True)
 while t < Tend:
 		data = time_step(mesh,data,dt,nu)
-		make_frame(mesh,data.u_vel**2 + data.v_vel**2,'Energy',ax)
-		mesh.update_mesh(data, dt)
+		make_frame(mesh,data.u_vel**2 + data.v_vel**2,'Energy',ax,True)
 		plt.pause(0.005)
 		t += dt
 		dx = np.zeros((N,2))
 		dx[:,0] = data.u_vel*t
 		dx[:,1] = data.v_vel*t
-		print np.linalg.norm((mesh.centroid-(centroid0+dx))/N)
+		mesh.update_mesh(data, dt)
+		print 'error:',np.linalg.norm((mesh.centroid-(centroid0+dx))/N)
 
 

@@ -25,11 +25,11 @@ for i in range(N):
 t = 0.
 plt.ion()
 ax = plt.gca()
-make_frame(mesh,data.u_vel,'u',ax)
+make_frame(mesh,data.u_vel,'u',ax,True)
 plt.pause(0.005)
 while t < Tend:
 	data = time_step(mesh,data,dt,nu)
-	make_frame(mesh,data.u_vel,'u',ax)
+	make_frame(mesh,data.u_vel,'u',ax,True)
 	mesh.update_mesh(data, dt)
 	plt.pause(0.005)
 	t += dt
