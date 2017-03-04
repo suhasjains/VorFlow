@@ -5,7 +5,6 @@ from mesh import *
 from plotting import *
 from solver import *
 
-
 N = 49
 L_x = 1.
 L_y = 1.
@@ -18,7 +17,8 @@ data = Data(N)
 
 t = 0.
 plt.ion()
-fig = plt.figure()
+ax = plt.gca()
+#fig = plt.figure()
 while t < Tend:
                 for i in range(N):
                         #data.u_vel[i] = -np.sin(2.*np.pi/L_y * (mesh.centroid[i][1] - L_y/2.))
@@ -29,7 +29,7 @@ while t < Tend:
 
                 mesh.update_mesh(data,dt)
 		#plot_mesh(mesh);
-		make_frame(mesh,data.press,'Area')
+		make_frame(mesh,data.press,'Area',ax)
 		plt.pause(0.005)
 		t += dt
 

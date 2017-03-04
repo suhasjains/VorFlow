@@ -24,12 +24,13 @@ for i in range(N):
 
 t = 0.
 plt.ion()
-make_frame(mesh,data.u_vel,'u')
+ax = plt.gca()
+make_frame(mesh,data.u_vel,'u',ax)
 plt.pause(0.005)
 while t < Tend:
 	Dx, Dy, L, Gx, Gy = time_step(mesh)
 	data = solve(data, Dx, Dy, L, Gx, Gy, dt, nu)
-	make_frame(mesh,data.u_vel,'u')
+	make_frame(mesh,data.u_vel,'u',ax)
 	mesh.update_mesh(data, dt)
 	plt.pause(0.005)
 	t += dt

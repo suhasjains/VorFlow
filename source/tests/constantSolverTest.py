@@ -4,6 +4,7 @@ sys.path.append('../')
 from mesh import *
 from plotting import *
 from solver import *
+import matplotlib as mpl
 
 
 N = 100
@@ -25,12 +26,13 @@ for i in range(N):
 
 t = 0.
 plt.ion()
-make_frame(mesh,data.u_vel**2 + data.v_vel**2,'Energy')
+ax = plt.gca()
+make_frame(mesh,data.u_vel**2 + data.v_vel**2,'Energy',ax)
 while t < Tend:
 		Dx, Dy, L, Gx, Gy = time_step(mesh)
 		data = solve(data, Dx, Dy, L, Gx, Gy, dt, nu)
 		mesh.update_mesh(data, dt)
-		make_frame(mesh,data.u_vel**2 + data.v_vel**2,'Energy')
+		make_frame(mesh,data.u_vel**2 + data.v_vel**2,'Energy',ax)
 		plt.pause(0.005)
 		t += dt
 
