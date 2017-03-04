@@ -23,7 +23,7 @@ def make_frame(mesh,field,name,ax,plotMesh=False):
 		if ax.lines != []:
 			ax.lines = []
 		# Plots the mesh and colours
-		if plotMesh: voronoi_plot_2d(mesh.voronoi)
+		if plotMesh: voronoi_plot_2d(mesh.voronoi,ax)
 		cmap = cm.get_cmap('RdBu')
 		for i in range(mesh.N):
 				region_index = mesh.voronoi.point_region[i] # Index of Voronoi region corresponding to site i
