@@ -185,13 +185,30 @@ class Mesh:
 				tic = timeit.default_timer()
 
 				# Face - O(N^2)
-				for i in range(self.N):
-						ridge_indices = np.where(voronoi.ridge_points == i)[0]; # Finds the ridge indices of point i
-						self.face[i] = np.zeros(self.N_neighbor[i]);
-						for j in range(self.N_neighbor[i]):
-								vertex_indices = voronoi.ridge_vertices[ridge_indices[j]];
-								f = voronoi.vertices[vertex_indices[0],:] - voronoi.vertices[vertex_indices[1],:];
-								self.face[i][j] = np.sqrt(f[0]**2 + f[1]**2);
+				#for i in range(self.N):
+				#		ridge_indices = np.where(voronoi.ridge_points == i)[0]; # Finds the ridge indices of point i
+				#		self.face[i] = np.zeros(self.N_neighbor[i]);
+				#		for j in range(self.N_neighbor[i]):
+				#				vertex_indices = voronoi.ridge_vertices[ridge_indices[j]];
+				#				f = voronoi.vertices[vertex_indices[0],:] - voronoi.vertices[vertex_indices[1],:];
+				#				self.face[i][j] = np.sqrt(f[0]**2 + f[1]**2);
+                           
+                                # Face - O(NlogN)
+                                neighbor_index = np.zeros(self.N);
+				
+                                for i in range(self.N):
+				    self.face[i] = np.zeros(self.N_neighbor[i]);
+
+                                x = np.nditer(voronoi.ridge_points, flags=['multi_index'])
+                                while not x.finished:
+                                    if x[0] < self.N:
+                                        vertex_indices = voronoi.ridge_vertices[x.multi_index[0]];
+                                        f = voronoi.vertices[vertex_indices[0],:] - voronoi.vertices[vertex_indices[1],:];
+                                        self.face[x[0]][int(neighbor_index[x[0]])] = np.sqrt(f[0]**2 + f[1]**2) 
+                                        neighbor_index[x[0]] += 1;
+                                    #print "%d <%s> %s \n" % (x[0], x.multi_index[0], x.multi_index[1]),
+                                    x.iternext()
+                                
 
 				toc = timeit.default_timer()
                                 print '3: '+'{:.2e}'.format((toc-tic)/self.N)+' s'
@@ -226,13 +243,29 @@ class Mesh:
 				
 				
 				# FaceCentre - O(N^2)
-				for i in range(self.N):
-						ridge_indices = np.where(voronoi.ridge_points == i)[0]; # Finds the ridge indices of point i
-						self.face_center[i] = np.zeros((self.N_neighbor[i],2));
-						for j in range(self.N_neighbor[i]):
-								vertex_indices = voronoi.ridge_vertices[ridge_indices[j]];
-								f = 0.5 * (voronoi.vertices[vertex_indices[0],:] + voronoi.vertices[vertex_indices[1],:]);
-								self.face_center[i][j,:] = f[:] - self.site[i,:];
+				#for i in range(self.N):
+				#		ridge_indices = np.where(voronoi.ridge_points == i)[0]; # Finds the ridge indices of point i
+				#		self.face_center[i] = np.zeros((self.N_neighbor[i],2));
+				#		for j in range(self.N_neighbor[i]):
+				#				vertex_indices = voronoi.ridge_vertices[ridge_indices[j]];
+				#				f = 0.5 * (voronoi.vertices[vertex_indices[0],:] + voronoi.vertices[vertex_indices[1],:]);
+				#				self.face_center[i][j,:] = f[:] - self.site[i,:];
+                               
+                                # FaceCentre - O(NlogN) 
+                                neighbor_index = np.zeros(self.N);
+				
+                                for i in range(self.N):
+				    self.face_center[i] = np.zeros((self.N_neighbor[i],2));
+
+                                x = np.nditer(voronoi.ridge_points, flags=['multi_index'])
+                                while not x.finished:
+                                    if x[0] < self.N:
+                                        vertex_indices = voronoi.ridge_vertices[x.multi_index[0]];
+                                        f = 0.5 * (voronoi.vertices[vertex_indices[0],:] + voronoi.vertices[vertex_indices[1],:]);
+                                        self.face_center[x[0]][int(neighbor_index[x[0]]),:] = f[:] - self.site[x[0],:]; 
+                                        neighbor_index[x[0]] += 1;
+                                    #print "%d <%s> %s \n" % (x[0], x.multi_index[0], x.multi_index[1]),
+                                    x.iternext()
 
 				toc = timeit.default_timer()
                                 print '5: '+'{:.2e}'.format((toc-tic)/self.N)+' s'
