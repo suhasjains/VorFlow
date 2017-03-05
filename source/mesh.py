@@ -131,9 +131,15 @@ class Mesh:
 				# Set the connectivity
 
                                 # Number of neighbors - O(N)
+				for i in range(self.N):
+				    self.N_neighbor[i] = 0;
+
                                 for x in np.nditer(voronoi.ridge_points):
                                     if x < self.N:
                                         self.N_neighbor[x] += 1;
+                                
+                                #print self.N_neighbor;
+
 
 				toc = timeit.default_timer()
                                 #print '0: '+'{:.2e}'.format((toc-tic)/self.N)+' s'
@@ -152,6 +158,7 @@ class Mesh:
                                         neighbor_index[x[0]] += 1;
                                     #print "%d <%s> %s \n" % (x[0], x.multi_index[0], x.multi_index[1]),
                                     x.iternext()
+                                
         
 
 				toc = timeit.default_timer()
@@ -257,6 +264,7 @@ class Mesh:
 						self.grad_area_t[i] = np.zeros((self.N_neighbor[i]+1,2));
 						for j in range(self.N_neighbor[i]):
 								neighbor_j = self.neighbor[i][j]%self.N; # Absolute index of the jth neighbour to i (Note wraps around)
+                                                                #print neighbor_j;
 								relative_i = np.where(self.neighbor[neighbor_j]%self.N == i)[0][0]; # Relative neighbour index of i from cell j
 								self.grad_area_t[i][j,:] = self.grad_area[neighbor_j][relative_i,:];
 						
