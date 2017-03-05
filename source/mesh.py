@@ -160,7 +160,7 @@ class Mesh:
                                 x = np.nditer(voronoi.ridge_points, flags=['multi_index'])
                                 while not x.finished:
                                     if x[0] < self.N:
-                                        self.neighbor[x[0]][neighbor_index[x[0]]] = voronoi.ridge_points[x.multi_index[0]][1-x.multi_index[1]];
+                                        self.neighbor[x[0]][int(neighbor_index[x[0]])] = voronoi.ridge_points[x.multi_index[0]][1-x.multi_index[1]];
                                         neighbor_index[x[0]] += 1;
                                     #print "%d <%s> %s \n" % (x[0], x.multi_index[0], x.multi_index[1]),
                                     x.iternext()
