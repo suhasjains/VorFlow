@@ -6,7 +6,7 @@ from plotting import *
 from solver import *
 
 
-N = 100
+N = 20**2
 L_x = 2.*np.pi
 L_y = 2.*np.pi
 dt = 0.1
@@ -28,6 +28,6 @@ ax = plt.gca()
 make_frame(mesh,data.u_vel,'u',ax,True)
 while t < Tend:
 		data = time_step(mesh,data,dt,nu)
-		make_frame(mesh,data.u_vel,'u',ax,True)
+		make_frame(mesh,data.u_vel,'u',ax,False)
 		mesh.update_mesh(data, dt)
 		t += dt
