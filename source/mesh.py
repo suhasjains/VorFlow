@@ -166,7 +166,7 @@ class Mesh:
 				# Calculate each of the properties sequentially (in individual for loops):
 				# Only for first N sites!
 
-				# Length - O(NlogN)
+				# Length - O(N)
 				for i in range(self.N):
 						self.length[i] = np.zeros([self.N_neighbor[i],2]);
 						for j in range(self.N_neighbor[i]):
@@ -178,7 +178,7 @@ class Mesh:
 						tic = timeit.default_timer()
 
 
-				# Face - O(NlogN)
+				# Face - O(N)
 				neighbor_index = np.zeros(self.N,dtype=int);
 				for i in range(self.N):
 						self.face[i] = np.zeros(self.N_neighbor[i]);
@@ -199,7 +199,7 @@ class Mesh:
 						tic = timeit.default_timer()
 
 
-				# Area & Centroid - O(~N)
+				# Area & Centroid - O(N)
 				for i in range(self.N):
 						region_index = voronoi.point_region[i]; # Finds the region index of point i
 						vertex_indices = voronoi.regions[region_index]; # Finds indices of vertices ordered around region of site i
@@ -228,7 +228,7 @@ class Mesh:
 						tic = timeit.default_timer()
 				
 				
-				# FaceCentre - O(NlogN)
+				# FaceCentre - O(N)
 				neighbor_index = np.zeros(self.N, dtype=int);
 				for i in range(self.N):
 						self.face_center[i] = np.zeros((self.N_neighbor[i],2));
