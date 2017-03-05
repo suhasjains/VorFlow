@@ -130,27 +130,15 @@ class Mesh:
 
 				# Set the connectivity
 
-                                # Number of neighbors - O(N^2)
-				#for i in range(self.N):
-			        #		self.N_neighbor[i] = np.sum(voronoi.ridge_points == i, dtype=int);
-
                                 # Number of neighbors - O(N)
                                 for x in np.nditer(voronoi.ridge_points):
                                     if x < self.N:
                                         self.N_neighbor[x] += 1;
 
 				toc = timeit.default_timer()
-                                print '0: '+'{:.2e}'.format((toc-tic)/self.N)+' s'
+                                #print '0: '+'{:.2e}'.format((toc-tic)/self.N)+' s'
 				tic = timeit.default_timer()
 
-				# Neighbours - O(N^2)
-				#for i in range(self.N):
-				#		here = np.where(voronoi.ridge_points == i); # Finds the site indices of point i
-				#		self.neighbor[i] = np.zeros(self.N_neighbor[i]+1,dtype=int);
-				#		for j in range(self.N_neighbor[i]):
-				#				# Pick out the index which is across from i
-				#				self.neighbor[i][j] = voronoi.ridge_points[here[0][j], int(not here[1][j])];
-	                        
                                 # Neighbors - O(N)
                                 neighbor_index = np.zeros(self.N);
 
@@ -167,7 +155,7 @@ class Mesh:
         
 
 				toc = timeit.default_timer()
-                                print '1: '+'{:.2e}'.format((toc-tic)/self.N)+' s'
+                                #print '1: '+'{:.2e}'.format((toc-tic)/self.N)+' s'
 				tic = timeit.default_timer()
 			    
 
@@ -181,18 +169,9 @@ class Mesh:
 								self.length[i][j,:] = voronoi.points[self.neighbor[i][j]] - voronoi.points[i];
 
 				toc = timeit.default_timer()
-                                print '2: '+'{:.2e}'.format((toc-tic)/self.N)+' s'
+                                #print '2: '+'{:.2e}'.format((toc-tic)/self.N)+' s'
 				tic = timeit.default_timer()
 
-				# Face - O(N^2)
-				#for i in range(self.N):
-				#		ridge_indices = np.where(voronoi.ridge_points == i)[0]; # Finds the ridge indices of point i
-				#		self.face[i] = np.zeros(self.N_neighbor[i]);
-				#		for j in range(self.N_neighbor[i]):
-				#				vertex_indices = voronoi.ridge_vertices[ridge_indices[j]];
-				#				f = voronoi.vertices[vertex_indices[0],:] - voronoi.vertices[vertex_indices[1],:];
-				#				self.face[i][j] = np.sqrt(f[0]**2 + f[1]**2);
-                           
                                 # Face - O(NlogN)
                                 neighbor_index = np.zeros(self.N);
 				
@@ -211,7 +190,7 @@ class Mesh:
                                 
 
 				toc = timeit.default_timer()
-                                print '3: '+'{:.2e}'.format((toc-tic)/self.N)+' s'
+                                #print '3: '+'{:.2e}'.format((toc-tic)/self.N)+' s'
 				tic = timeit.default_timer()
 
 				# Area & Centroid - O(~N)
@@ -238,20 +217,11 @@ class Mesh:
 						self.area[i] = np.abs(self.area[i]);
 
 				toc = timeit.default_timer()
-                                print '4: '+'{:.2e}'.format((toc-tic)/self.N)+' s'
+                                #print '4: '+'{:.2e}'.format((toc-tic)/self.N)+' s'
 				tic = timeit.default_timer()
 				
 				
-				# FaceCentre - O(N^2)
-				#for i in range(self.N):
-				#		ridge_indices = np.where(voronoi.ridge_points == i)[0]; # Finds the ridge indices of point i
-				#		self.face_center[i] = np.zeros((self.N_neighbor[i],2));
-				#		for j in range(self.N_neighbor[i]):
-				#				vertex_indices = voronoi.ridge_vertices[ridge_indices[j]];
-				#				f = 0.5 * (voronoi.vertices[vertex_indices[0],:] + voronoi.vertices[vertex_indices[1],:]);
-				#				self.face_center[i][j,:] = f[:] - self.site[i,:];
-                               
-                                # FaceCentre - O(NlogN) 
+                                # FaceCentre - O(NlogN)
                                 neighbor_index = np.zeros(self.N);
 				
                                 for i in range(self.N):
@@ -268,7 +238,7 @@ class Mesh:
                                     x.iternext()
 
 				toc = timeit.default_timer()
-                                print '5: '+'{:.2e}'.format((toc-tic)/self.N)+' s'
+                                #print '5: '+'{:.2e}'.format((toc-tic)/self.N)+' s'
 				tic = timeit.default_timer()
 				
 				# GradArea - O(N)
@@ -296,7 +266,7 @@ class Mesh:
 						self.grad_area[i][-1,:] = self.grad_area_t[i][-1,:];
 
 				toc = timeit.default_timer()
-                                print '6: '+'{:.2e}'.format((toc-tic)/self.N)+' s'
+                                #print '6: '+'{:.2e}'.format((toc-tic)/self.N)+' s'
 				tic = timeit.default_timer()
 
 				# isBoundary - O(N)
@@ -311,7 +281,7 @@ class Mesh:
 										self.neighbor[i][j] = self.neighbor[i][j]%self.N; # Well that's embarrassing
 
 				toc = timeit.default_timer()
-                                print '7: '+'{:.2e}'.format((toc-tic)/self.N)+' s'
+                                #print '7: '+'{:.2e}'.format((toc-tic)/self.N)+' s'
 				tic = timeit.default_timer()
 
 
