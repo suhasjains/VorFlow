@@ -6,7 +6,7 @@ from plotting import *
 from solver import *
 
 
-N = 64;
+N = 16;
 L = 1.;
 
 

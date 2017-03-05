@@ -128,22 +128,44 @@ class Mesh:
 				
 				tic = timeit.default_timer()
 
-				# Set the connectivity - O(N^2)
-				for i in range(self.N):
-						self.N_neighbor[i] = np.sum(voronoi.ridge_points == i, dtype=int);
+				# Set the connectivity
+
+                                # Number of neighbors - O(N^2)
+				#for i in range(self.N):
+			        #		self.N_neighbor[i] = np.sum(voronoi.ridge_points == i, dtype=int);
+
+                                # Number of neighbors - O(N)
+                                for x in np.nditer(voronoi.ridge_points):
+                                    if x < self.N:
+                                        self.N_neighbor[x] += 1;
 
 				toc = timeit.default_timer()
                                 print '0: '+'{:.2e}'.format((toc-tic)/self.N)+' s'
 				tic = timeit.default_timer()
 
 				# Neighbours - O(N^2)
+				#for i in range(self.N):
+				#		here = np.where(voronoi.ridge_points == i); # Finds the site indices of point i
+				#		self.neighbor[i] = np.zeros(self.N_neighbor[i]+1,dtype=int);
+				#		for j in range(self.N_neighbor[i]):
+				#				# Pick out the index which is across from i
+				#				self.neighbor[i][j] = voronoi.ridge_points[here[0][j], int(not here[1][j])];
+	                        
+                                # Neighbors - O(N)
+                                neighbor_index = np.zeros(self.N);
+
 				for i in range(self.N):
-						here = np.where(voronoi.ridge_points == i); # Finds the site indices of point i
-						self.neighbor[i] = np.zeros(self.N_neighbor[i],dtype=int);
-						for j in range(self.N_neighbor[i]):
-								# Pick out the index which is across from i
-								self.neighbor[i][j] = voronoi.ridge_points[here[0][j], int(not here[1][j])];
-				
+				    self.neighbor[i] = np.zeros(self.N_neighbor[i],dtype=int);
+                                
+                                x = np.nditer(voronoi.ridge_points, flags=['multi_index'])
+                                while not x.finished:
+                                    if x[0] < self.N:
+                                        self.neighbor[x[0]][neighbor_index[x[0]]] = voronoi.ridge_points[x.multi_index[0]][1-x.multi_index[1]];
+                                        neighbor_index[x[0]] += 1;
+                                    #print "%d <%s> %s \n" % (x[0], x.multi_index[0], x.multi_index[1]),
+                                    x.iternext()
+        
+
 				toc = timeit.default_timer()
                                 print '1: '+'{:.2e}'.format((toc-tic)/self.N)+' s'
 				tic = timeit.default_timer()
