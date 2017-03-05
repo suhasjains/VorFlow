@@ -6,7 +6,7 @@ from plotting import *
 from solver import *
 
 
-N = 16384;
+N = 4096;
 L = 1.;
 
 tic = timeit.default_timer()
