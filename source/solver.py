@@ -1,5 +1,6 @@
 import numpy as np
 import scipy.sparse.linalg as lp
+import scipy.sparse as sp
 
 class Data:
 
@@ -64,6 +65,12 @@ def build_matrices(mesh):
 					Gy[i][i] -= mesh.grad_area_t[i][-1][1] / mesh.area[i]
 	# If periodic, connectivity handled in mesh.py
 	# If Dirichlet or Neumann, adjust BCs (to be done? if they are not handled by mesh.py)
+	# Sparsify matrices
+	Dx = sp.csr_matrix(Dx)
+	Dy = sp.csr_matrix(Dy)
+	L = sp.csr_matrix(L)
+	Gx = sp.csr_matrix(Gx)
+	Gy = sp.csr_matrix(Gy)
 	return Dx, Dy, L, Gx, Gy
 
 
@@ -76,13 +83,16 @@ def time_step(mesh,data,dt,nu):
 
 		if (solver_type == 'CrankNicolson'):
 				# Solution for u by pressure projection
-				I = np.identity((N))
+				#I = np.identity((N))
+				I = sp.eye(N)
 				# Implicit projection method
 				# Solve for u_star
 				A1 = I - nu*dt*L/(2.)
 				A2 = I + nu*dt*L/(2.)
-				rhs_u = -0.5*dt*np.dot(Gx, data.press) + np.dot(A2, data.u_vel)
-				rhs_v = -0.5*dt*np.dot(Gy, data.press) + np.dot(A2, data.v_vel)
+				#rhs_u = -0.5*dt*np.dot(Gx, data.press) + np.dot(A2, data.u_vel)
+				rhs_u = -0.5*dt*Gx.dot(data.press) + A2.dot(data.u_vel)
+				#rhs_v = -0.5*dt*np.dot(Gy, data.press) + np.dot(A2, data.v_vel)
+				rhs_v = -0.5*dt*Gy.dot(data.press) + A2.dot(data.v_vel)
 				#print(sp.sparse.issparse(A1))
 				#u_star = np.linalg.solve(A1, rhs_u)
 				#v_star = np.linalg.solve(A1, rhs_v)
@@ -90,66 +100,96 @@ def time_step(mesh,data,dt,nu):
 				u_star,B = lp.gmres(A1, rhs_u)
 				print('2')
 				v_star,B = lp.gmres(A1, rhs_v)
+				print('3')
 				# Vel star star
-				u_star_star = u_star + dt*0.5*np.dot(Gx, data.press)
-				v_star_star = v_star + dt*0.5*np.dot(Gy, data.press)
+				#u_star_star = u_star + dt*0.5*np.dot(Gx, data.press)
+				u_star_star = u_star + dt*0.5*Gx.dot(data.press)
+				#v_star_star = v_star + dt*0.5*np.dot(Gy, data.press)
+				v_star_star = v_star + dt*0.5*Gy.dot(data.press)
+				print('3a')
 				# Pressure correction
-				lhsPressure_x = dt*np.dot(Dx, Gx)
-				lhsPressure_y = dt*np.dot(Dy, Gy)
-				rhsPressure_u = 2.*np.dot(Dx, u_star_star)
-				rhsPressure_v = 2.*np.dot(Dy, v_star_star)
+				#lhsPressure_x = dt*np.dot(Dx, Gx)
+				lhsPressure_x = dt*Dx*Gx
+				#lhsPressure_y = dt*np.dot(Dy, Gy)
+				lhsPressure_y = dt*Dy*Gy
+				#rhsPressure_u = 2.*np.dot(Dx, u_star_star)
+				rhsPressure_u = 2.*Dx.dot(u_star_star)
+				#rhsPressure_v = 2.*np.dot(Dy, v_star_star)
+				rhsPressure_v = 2.*Dy.dot(v_star_star)
+				print('3b')
 				lhsPressure = lhsPressure_x + lhsPressure_y
 				rhsPressure = rhsPressure_u + rhsPressure_v
 				#print(sp.sparse.issparse(lhsPressure))
 				#P_tild, res, ra, s = np.linalg.lstsq(lhsPressure, rhsPressure)
-				print('3')
-				P_tild, B = lp.gmres(lhsPressure, rhsPressure)
 				print('4')
+				P_tild, B = lp.gmres(lhsPressure, rhsPressure)
+				print('5')
 				# Update velocity and pressure
-				GPx = np.dot(Gx, P_tild)
-				GPy = np.dot(Gy, P_tild)
+				#GPx = np.dot(Gx, P_tild)
+				GPx = Gx.dot(P_tild)
+				#GPy = np.dot(Gy, P_tild)
+				GPy = Gy.dot(P_tild)
 				data.u_vel = u_star_star - 0.5*dt*GPx
 				data.v_vel = v_star_star - 0.5*dt*GPy
 				data.press = P_tild
 		elif (solver_type == 'FEuler'):
 				# Solution for u by pressure projection
-				I = np.identity((N))
+				#I = np.identity((N))
+				I = sp.eye(N)
 				A1 = nu*L
 				# Explicit
 				# Pressure correction
-				lhsPressure_x = np.dot(Dx, Gx)
-				lhsPressure_y = np.dot(Dy, Gy)
-				Hx = np.dot(A1, data.u_vel)
-				Hy = np.dot(A1, data.v_vel)
-				rhsPressure_u = np.dot(Dx, Hx)
-				rhsPressure_v = np.dot(Dy, Hy)
+				#lhsPressure_x = np.dot(Dx, Gx)
+				lhsPressure_x = Dx*Gx
+				#lhsPressure_y = np.dot(Dy, Gy)
+				lhsPressure_y = Dy*Gy
+				#Hx = np.dot(A1, data.u_vel)
+				Hx = A1.dot(data.u_vel)
+				#Hy = np.dot(A1, data.v_vel)
+				Hy = A1.dot(data.v_vel)
+				#rhsPressure_u = np.dot(Dx, Hx)
+				rhsPressure_u = Dx.dot(Hx)
+				#rhsPressure_v = np.dot(Dy, Hy)
+				rhsPressure_v = Dy.dot(Hy)
 				lhsPressure = lhsPressure_x + lhsPressure_y
 				rhsPressure = rhsPressure_u + rhsPressure_v
-				P_tild, res, ra, s = np.linalg.lstsq(lhsPressure, rhsPressure)
+				#P_tild, res, ra, s = np.linalg.lstsq(lhsPressure, rhsPressure)
+				P_tild, B = lp.gmres(lhsPressure, rhsPressure)
 				#P_tild = np.linalg.solve(lhsPressure, rhsPressure)
-				res_norm = np.linalg.norm(res)
+				#res_norm = np.linalg.norm(res)
 				#print(res_norm)
 				# Solve for u_star
-				rhs_u = -dt*np.dot(Gx, data.press) + dt*np.dot(A1, data.u_vel)
-				rhs_v = -dt*np.dot(Gy, data.press) + dt*np.dot(A1, data.v_vel)
+				#rhs_u = -dt*np.dot(Gx, data.press) + dt*np.dot(A1, data.u_vel)
+				rhs_u = -dt*Gx.dot(data.press) + dt*A1.dot(data.u_vel)
+				#rhs_v = -dt*np.dot(Gy, data.press) + dt*np.dot(A1, data.v_vel)
+				rhs_v = -dt*Gy.dot(data.press) + dt*A1.dot(data.v_vel)
 				data.u_vel = data.u_vel + rhs_u
 				data.v_vel = data.v_vel + rhs_v
 				data.press = P_tild
+
 		elif solver_type == 'BEuler': # AW
 				# Solve using Backward Euler (no dt restriction)
 				# Inefficient, but robust.
 
-				I = np.identity((N))
+				#I = np.identity((N))
+				I = sp.eye(N)
 				
-				u_star = np.linalg.solve(I - nu * dt * L, data.u_vel);
-				v_star = np.linalg.solve(I - nu * dt * L, data.v_vel);
+				#u_star = np.linalg.solve(I - nu * dt * L, data.u_vel);
+				u_star = lp.gmres(I - nu * dt * L, data.u_vel);
+				#v_star = np.linalg.solve(I - nu * dt * L, data.v_vel);
+				v_star = lp.gmres(I - nu * dt * L, data.v_vel);
 			
-				Div = np.dot(Dx,u_star) + np.dot(Dy,v_star);
-				DG = np.dot(Dx,Gx) + np.dot(Dy,Gy); # == L ???  Nope...
+				#Div = np.dot(Dx,u_star) + np.dot(Dy,v_star);
+				Div = Dx.dot(u_star) + Dy.dot(v_star);
+				#DG = np.dot(Dx,Gx) + np.dot(Dy,Gy); # == L ???  Nope...
+				DG = Dx*Gx + Dy*Gy; # == L ???  Nope...
 			
-				q = np.linalg.solve(DG,Div);
+				#q = np.linalg.solve(DG,Div);
+				q, B = lp.gmres(DG,Div);
 			
-				data.u_vel = u_star - np.dot(Gx,q);
-				data.v_vel = v_star - np.dot(Gy,q);
+				#data.u_vel = u_star - np.dot(Gx,q);
+				data.u_vel = u_star - Gx.dot(q);
+				#data.v_vel = v_star - np.dot(Gy,q);
+				data.v_vel = v_star - Gy.dot(q);
 
 		return data
