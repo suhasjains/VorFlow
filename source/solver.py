@@ -1,5 +1,5 @@
 import numpy as np
-
+import scipy.sparse.linalg as lp
 
 class Data:
 
@@ -83,8 +83,13 @@ def time_step(mesh,data,dt,nu):
 				A2 = I + nu*dt*L/(2.)
 				rhs_u = -0.5*dt*np.dot(Gx, data.press) + np.dot(A2, data.u_vel)
 				rhs_v = -0.5*dt*np.dot(Gy, data.press) + np.dot(A2, data.v_vel)
-				u_star = np.linalg.solve(A1, rhs_u)
-				v_star = np.linalg.solve(A1, rhs_v)
+				#print(sp.sparse.issparse(A1))
+				#u_star = np.linalg.solve(A1, rhs_u)
+				#v_star = np.linalg.solve(A1, rhs_v)
+				print('1')
+				u_star,B = lp.gmres(A1, rhs_u)
+				print('2')
+				v_star,B = lp.gmres(A1, rhs_v)
 				# Vel star star
 				u_star_star = u_star + dt*0.5*np.dot(Gx, data.press)
 				v_star_star = v_star + dt*0.5*np.dot(Gy, data.press)
@@ -95,7 +100,11 @@ def time_step(mesh,data,dt,nu):
 				rhsPressure_v = 2.*np.dot(Dy, v_star_star)
 				lhsPressure = lhsPressure_x + lhsPressure_y
 				rhsPressure = rhsPressure_u + rhsPressure_v
-				P_tild, res, ra, s = np.linalg.lstsq(lhsPressure, rhsPressure)
+				#print(sp.sparse.issparse(lhsPressure))
+				#P_tild, res, ra, s = np.linalg.lstsq(lhsPressure, rhsPressure)
+				print('3')
+				P_tild, B = lp.gmres(lhsPressure, rhsPressure)
+				print('4')
 				# Update velocity and pressure
 				GPx = np.dot(Gx, P_tild)
 				GPy = np.dot(Gy, P_tild)
