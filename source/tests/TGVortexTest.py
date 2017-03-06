@@ -57,9 +57,9 @@ for NN in range(N0, Nend, Nstep):
 
 	# Write error to file
 	filename = 'TGVortexError.txt'
-	target = open(filename, 'w')
+	target = open(filename, 'a')
 	line = np.array([N, error])
-	target.write(line)
+	target.write("\t".join(str(elem) for elem in line))
 	target.write("\n")
 	target.close()
 
