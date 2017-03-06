@@ -37,7 +37,7 @@ def make_frame(mesh,field,name,ax,plotMesh=False):
 				region_vertex_index = mesh.voronoi.regions[region_index]
 				if not -1 in region_vertex_index:
 						polygon = [mesh.voronoi.vertices[k] for k in region_vertex_index]
-						plt.fill(*zip(*polygon),color=cmap(field[i%mesh.N])) # Colours in the ith polygon with corresponding colour data from cmap(field)
+						im=plt.fill(*zip(*polygon),color=cmap(field[i%mesh.N])) # Colours in the ith polygon with corresponding colour data from cmap(field)
 		
 		plt.xlabel(r'$x$')
 		plt.ylabel(r'$y$')
@@ -45,5 +45,8 @@ def make_frame(mesh,field,name,ax,plotMesh=False):
 		plt.axis('scaled')
 		plt.xlim([0.,mesh.L_x])
 		plt.ylim([0.,mesh.L_y])
+		cax = cm.ScalarMappable(cmap=cmap)
+		cax.set_array(field)
+		plt.colorbar(cax)
 		plt.show()
 		plt.pause(1e-6)
