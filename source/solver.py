@@ -13,11 +13,11 @@ class Data:
 def build_matrices(mesh):
 	# Initialize matrices
 	N = mesh.N
-	Dx = sp.coo_matrix((N,N))
-	Dy = sp.coo_matrix((N,N))
-	L = sp.coo_matrix((N,N))
-	Gx = sp.coo_matrix((N,N))
-	Gy = sp.coo_matrix((N,N))
+	Dx = sp.dok_matrix((N,N))
+	Dy = sp.dok_matrix((N,N))
+	L = sp.dok_matrix((N,N))
+	Gx = sp.dok_matrix((N,N))
+	Gy = sp.dok_matrix((N,N))
 	type = 1
 	# Populate matrices
 	for i in range(N):
