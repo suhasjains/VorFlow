@@ -13,11 +13,11 @@ class Data:
 def build_matrices(mesh):
 	# Initialize matrices
 	N = mesh.N
-	Dx = sp.dok_matrix((N,N))
-	Dy = sp.dok_matrix((N,N))
-	L = sp.dok_matrix((N,N))
-	Gx = sp.dok_matrix((N,N))
-	Gy = sp.dok_matrix((N,N))
+	Dx = sp.coo_matrix((N,N))
+	Dy = sp.coo_matrix((N,N))
+	L = sp.coo_matrix((N,N))
+	Gx = sp.coo_matrix((N,N))
+	Gy = sp.coo_matrix((N,N))
 	type = 1
 	# Populate matrices
 	for i in range(N):
@@ -31,34 +31,34 @@ def build_matrices(mesh):
 							mlen = np.sqrt(mesh.length[i][j,0]**2 + mesh.length[i][j,1]**2)
 							coeff = mfac/mlen/mesh.area[i]
 							# Div, x
-							Dx[i,k] += coeff*(mesh.length[i][j,0]-mesh.face_center[i][j,0])
+							Dx[i,k] = coeff*(mesh.length[i][j,0]-mesh.face_center[i][j,0])
 							Dx[i,i] -= coeff*(mesh.length[i][j,0]-mesh.face_center[i][j,0])
 							# Div, y
-							Dy[i,k] += coeff*(mesh.length[i][j,1]-mesh.face_center[i][j,1])
+							Dy[i,k] = coeff*(mesh.length[i][j,1]-mesh.face_center[i][j,1])
 							Dy[i,i] -= coeff*(mesh.length[i][j,1]-mesh.face_center[i][j,1])
 							# Laplacian
-							L[i,k] += coeff
+							L[i,k] = coeff
 							L[i,i] -= coeff
 							# Grad, x
-							Gx[i,k] += coeff*mesh.face_center[i][j,0]
+							Gx[i,k] = coeff*mesh.face_center[i][j,0]
 							Gx[i,i] -= coeff*mesh.face_center[i][j,0]
 							# Grad, y
-							Gy[i,k] += coeff*mesh.face_center[i][j,1]
+							Gy[i,k] = coeff*mesh.face_center[i][j,1]
 							Gy[i,i] -= coeff*mesh.face_center[i][j,1]
 					## Potential new matrices
 					else:
 							mlen = np.sqrt(np.sum(np.square(mesh.length[i][j])))
 							# Div, x
-							Dx[i,k] += mesh.grad_area[i][j][0] / mesh.area[i]
+							Dx[i,k] = mesh.grad_area[i][j][0] / mesh.area[i]
 							# Div, y
-							Dy[i,k] += mesh.grad_area[i][j][1] / mesh.area[i]
+							Dy[i,k] = mesh.grad_area[i][j][1] / mesh.area[i]
 							# Laplacian
-							L[i,k] += mesh.face[i][j]/mlen/mesh.area[i]
+							L[i,k] = mesh.face[i][j]/mlen/mesh.area[i]
 							L[i,i] -= mesh.face[i][j]/mlen/mesh.area[i]
 							## Grad, x
-							Gx[i,k] -= mesh.grad_area_t[i][j][0] / mesh.area[i]
+							Gx[i,k] = -mesh.grad_area_t[i][j][0] / mesh.area[i]
 							# Grad, y
-							Gy[i,k] -= mesh.grad_area_t[i][j][1] / mesh.area[i]
+							Gy[i,k] = -mesh.grad_area_t[i][j][1] / mesh.area[i]
 			if type == 1:
 					Dx[i,i] += mesh.grad_area[i][-1][0] / mesh.area[i]
 					Dy[i,i] += mesh.grad_area[i][-1][1] / mesh.area[i]
@@ -68,12 +68,11 @@ def build_matrices(mesh):
 	# If Dirichlet or Neumann, adjust BCs (to be done? if they are not handled by mesh.py)
 	# Sparsify matrices
 	# (This may need to be done simultaneous with construction above if this procedure is memory-limited)
-	Dx = sp.csr_matrix(Dx)
-	Dy = sp.csr_matrix(Dy)
-	L = sp.csr_matrix(L)
-	Gx = sp.csr_matrix(Gx)
-	Gy = sp.csr_matrix(Gy)
-	Dx
+	Dx.tocsr()
+	Dy.tocsr()
+	L.tocsr()
+	Gx.tocsr()
+	Gy.tocsr()
 	return Dx, Dy, L, Gx, Gy
 
 
