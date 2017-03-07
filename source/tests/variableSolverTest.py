@@ -11,7 +11,7 @@ L_x = 2.*np.pi
 L_y = 2.*np.pi
 dt = 0.1
 Tend = 1.
-nu = 0.01
+nu = 1.
 rho = 1.
 
 mesh = Mesh(N,L_x,L_y,np.zeros(4),'random')

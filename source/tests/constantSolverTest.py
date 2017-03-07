@@ -20,8 +20,8 @@ mesh = Mesh(N,L_x,L_y,np.zeros(4),'random')
 data = Data(N);
 
 for i in range(N):
-		data.u_vel[i] = 0.0
-		data.v_vel[i] = 0.0
+		data.u_vel[i] = 1.0
+		data.v_vel[i] = 1.0
 
 t = 0.
 plt.ion()

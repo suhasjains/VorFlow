@@ -1,6 +1,7 @@
 import numpy as np
 import scipy.sparse.linalg as lp
 import scipy.sparse as sp
+import timeit
 
 class Data:
 
@@ -66,6 +67,7 @@ def build_matrices(mesh):
 	# If periodic, connectivity handled in mesh.py
 	# If Dirichlet or Neumann, adjust BCs (to be done? if they are not handled by mesh.py)
 	# Sparsify matrices
+	# (This may need to be done simultaneous with construction above if this procedure is memory-limited)
 	Dx = sp.csr_matrix(Dx)
 	Dy = sp.csr_matrix(Dy)
 	L = sp.csr_matrix(L)
@@ -75,6 +77,8 @@ def build_matrices(mesh):
 
 
 def time_step(mesh,data,dt,nu):
+	
+		metatic = timeit.default_timer()
 	
 		Dx, Dy, L, Gx, Gy = build_matrices(mesh);
 		N = mesh.N
@@ -96,17 +100,17 @@ def time_step(mesh,data,dt,nu):
 				#print(sp.sparse.issparse(A1))
 				#u_star = np.linalg.solve(A1, rhs_u)
 				#v_star = np.linalg.solve(A1, rhs_v)
-				print('1')
+				#print('1')
 				u_star,B = lp.gmres(A1, rhs_u)
-				print('2')
+				#print('2')
 				v_star,B = lp.gmres(A1, rhs_v)
-				print('3')
+				#print('3')
 				# Vel star star
 				#u_star_star = u_star + dt*0.5*np.dot(Gx, data.press)
 				u_star_star = u_star + dt*0.5*Gx.dot(data.press)
 				#v_star_star = v_star + dt*0.5*np.dot(Gy, data.press)
 				v_star_star = v_star + dt*0.5*Gy.dot(data.press)
-				print('3a')
+				#print('3a')
 				# Pressure correction
 				#lhsPressure_x = dt*np.dot(Dx, Gx)
 				lhsPressure_x = dt*Dx*Gx
@@ -116,14 +120,14 @@ def time_step(mesh,data,dt,nu):
 				rhsPressure_u = 2.*Dx.dot(u_star_star)
 				#rhsPressure_v = 2.*np.dot(Dy, v_star_star)
 				rhsPressure_v = 2.*Dy.dot(v_star_star)
-				print('3b')
+				#print('3b')
 				lhsPressure = lhsPressure_x + lhsPressure_y
 				rhsPressure = rhsPressure_u + rhsPressure_v
 				#print(sp.sparse.issparse(lhsPressure))
 				#P_tild, res, ra, s = np.linalg.lstsq(lhsPressure, rhsPressure)
-				print('4')
+				#print('4')
 				P_tild, B = lp.gmres(lhsPressure, rhsPressure)
-				print('5')
+				#print('5')
 				# Update velocity and pressure
 				#GPx = np.dot(Gx, P_tild)
 				GPx = Gx.dot(P_tild)
@@ -191,5 +195,8 @@ def time_step(mesh,data,dt,nu):
 				data.u_vel = u_star - Gx.dot(q);
 				#data.v_vel = v_star - np.dot(Gy,q);
 				data.v_vel = v_star - Gy.dot(q);
-
+		
+		metatoc = timeit.default_timer()
+		print 'Solving Complete: '+'{:.2e}'.format(metatoc-metatic)+' s'
+		
 		return data

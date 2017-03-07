@@ -95,6 +95,8 @@ class Mesh:
 				
 				profile = False;
 				
+				metatic = timeit.default_timer()
+				
 				if self.is_periodic:
 						# Tile the sites -- NOTE: This is very inefficient! Later try using just a few critical edge sites.
 						# However, this will require rewriting the periodic connectivity algorithm. (AW)
@@ -296,7 +298,8 @@ class Mesh:
 						tic = timeit.default_timer()
 
 
-
+				metatoc = timeit.default_timer()
+				print 'Meshing Complete: '+'{:.2e}'.format(metatoc-metatic)+' s'
 
 
 
