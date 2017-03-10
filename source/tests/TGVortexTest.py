@@ -14,9 +14,9 @@ Tend = 0.01
 nu = 0.1
 rho = 1.
 
-N0 = 60
-Nend = 61
-Nstep = 1
+N0 = 10
+Nend = 1000
+Nstep = 10
 for NN in range(N0, Nend, Nstep):
 	N = NN**2
 	mesh = Mesh(N,L_x,L_y,np.zeros(4),'random')
