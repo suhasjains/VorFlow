@@ -10,4 +10,4 @@
 
 cd $PBS_O_WORKDIR
 
-python TGVortexTest.py >> TGVortexTest_out.txt
+python TGVortexTestTime.py >> TGVortexTestTime_out.txt
