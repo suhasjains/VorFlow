@@ -6,10 +6,12 @@ from plotting import *
 from solver import *
 
 
-N = 200**2
+Nx = 25;
+
+N = Nx**2
 L_x = 1.
 L_y = 1.
-dt = 0.01
+dt = 1./Nx;
 dTPlot = 0.1
 Tend = 1.
 nu = 1e-4
@@ -18,30 +20,25 @@ rho = 1.
 mesh = Mesh(N,L_x,L_y,np.zeros(4),'random')
 data = Data(N);
 
-A = 1.;
-k_x = 2.;
-width = 1./3.;
+Gamma = 1.;
 centre = 0.5;
+R = 1./4.;
 smoothing = 10.;
 
 for i in range(N):
 		y = mesh.centroid[i][1] - centre;
-		x = mesh.centroid[i][0];
-		data.u_vel[i] = 0.5*A*(np.tanh(smoothing*(y+0.5*width)) - np.tanh(smoothing*(y-0.5*width))) - 0.5*A; 
-		
-		data.v_vel[i] = A/10. * np.sin(2.*np.pi*k_x * x/L_x)
+		x = mesh.centroid[i][0] - centre;
+                r = np.sqrt(x**2 + y**2);
+		data.u_vel[i] = -y * (1.+np.tanh(smoothing*(R-r)));
+		data.v_vel[i] = x * (1.+np.tanh(smoothing*(R-r)));
 
 
 t = 0.
 tprint = 0.
-#plt.ion()
-#ax = plt.gca()
-#make_frame(mesh,data.u_vel,'u',ax,False)
+plt.ion()
+ax = plt.gca()
 while t < Tend:
 		data = time_step(mesh,data,dt,nu)
-		if t > tprint:
-				#make_frame(mesh,data.u_vel,'u',ax,False)
-				tprint += dTPlot;
-		
+	        make_frame(mesh,data.u_vel**2 + data.v_vel**2,'Energy',ax,False)
 		mesh.update_mesh(data, dt)
 		t += dt
