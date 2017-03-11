@@ -36,20 +36,18 @@ for i in range(N):
 
 
 t = 0.
-tprint = dTPlot
-#plt.ion()
+data = time_step(mesh,data,0.,nu) # Project Pressure...
+tprint = 0.
 ax = plt.gca()
-#make_frame(mesh,data.u_vel,'u',ax,False)
 i = 0;
 while t < Tend:
-		data = time_step(mesh,data,dt,nu)
-	        #make_frame(mesh,data.u_vel,'u',ax,False)
-		if t > tprint:
+		if t >= tprint:
 			tprint += dTPlot;
 			save_frame(mesh,tracer,'Tracer',t,ax,'output/tracer'+'{:04d}'.format(i)+'.png',False)
 			save_frame(mesh,0.5*(data.u_vel**2+data.v_vel**2),'Energy',t,ax,'output/energy'+'{:04d}'.format(i)+'.png',False)
 			save_frame(mesh,data.press,'Pressure',t,ax,'output/pressure'+'{:04d}'.format(i)+'.png',False)
 			i += 1
 		
+		data = time_step(mesh,data,dt,nu)	
 		mesh.update_mesh(data, dt)
 		t += dt
