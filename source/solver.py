@@ -73,7 +73,7 @@ def build_matrices(mesh):
 	L = sp.csr_matrix(L)
 	Gx = sp.csr_matrix(Gx)
 	Gy = sp.csr_matrix(Gy)
-	Dx
+	
 	return Dx, Dy, L, Gx, Gy
 
 
@@ -84,7 +84,7 @@ def time_step(mesh,data,dt,nu):
 		
 		metatic = timeit.default_timer()		
 
-		solver_type = 'CrankNicolson'
+		solver_type = 'BEuler'
 
 		if (solver_type == 'CrankNicolson'):
 				# Solution for u by pressure projection
