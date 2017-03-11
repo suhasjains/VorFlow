@@ -28,7 +28,7 @@ smoothing = 10.;
 for i in range(N):
 		y = mesh.centroid[i][1] - centre;
 		x = mesh.centroid[i][0] - centre;
-                r = np.sqrt(x**2 + y**2);
+		r = np.sqrt(x**2 + y**2);
 		data.u_vel[i] = -y * (1.+np.tanh(smoothing*(R-r)));
 		data.v_vel[i] = x * (1.+np.tanh(smoothing*(R-r)));
 
@@ -36,12 +36,12 @@ for i in range(N):
 t = 0.
 tprint = 0.
 #plt.ion()
-#ax = plt.gca()
+ax = plt.gca()
 i = 0;
 while t < Tend:
 		data = time_step(mesh,data,dt,nu)
-	        #make_frame(mesh,data.u_vel**2 + data.v_vel**2,'Energy',ax,False)
-                save_frame(mesh,data.u_vel**2 + data.v_vel**2,'Energy','output'+'{:04d}'.format(i)+'.png',True)
-                mesh.update_mesh(data, dt)
+		#make_frame(mesh,data.u_vel**2 + data.v_vel**2,'Energy',ax,False)
+		save_frame(mesh,data.u_vel**2 + data.v_vel**2,'Energy',t,ax,'output'+'{:04d}'.format(i)+'.png',True)
+		mesh.update_mesh(data, dt)
 		t += dt
-                i += 1;
+		i += 1;

@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib as mpl
-mpl.use('Agg')
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 from scipy.spatial import voronoi_plot_2d
@@ -22,10 +21,10 @@ def make_frame(mesh,field,name,ax,plotMesh=False):
 		if plotMesh: voronoi_plot_2d(mesh.voronoi,ax)
 		
 		cmap = cm.get_cmap('RdBu')
-                mappable = cm.ScalarMappable(cmap=cmap)
-                mappable.set_array(field)
-                normalize = mpl.colors.Normalize(vmin=field.min(), vmax=field.max())
-                for i in range(mesh.N):
+		mappable = cm.ScalarMappable(cmap=cmap)
+		mappable.set_array(field)
+		normalize = mpl.colors.Normalize(vmin=field.min(), vmax=field.max())
+		for i in range(mesh.N):
 				region_index = mesh.voronoi.point_region[i] # Index of Voronoi region corresponding to site i
 				region_vertex_index = mesh.voronoi.regions[region_index]
 				if not -1 in region_vertex_index:
@@ -48,10 +47,13 @@ def make_frame(mesh,field,name,ax,plotMesh=False):
 		plt.pause(1e-6)
 
 
-def save_frame(mesh,field,name,fileName,plotMesh=False):
-
+def save_frame(mesh,field,name,time,ax,fileName,plotMesh=False):
+	
+		# Remove previous plot
+		fig = plt.gcf();
+		ax.clear()
 		# Plots the mesh and colours
-		if plotMesh: voronoi_plot_2d(mesh.voronoi)
+		if plotMesh: voronoi_plot_2d(mesh.voronoi,ax)
 		
 		cmap = cm.get_cmap('RdBu')
 		mappable = cm.ScalarMappable(cmap=cmap)
@@ -66,10 +68,16 @@ def save_frame(mesh,field,name,fileName,plotMesh=False):
 		
 		plt.xlabel(r'$x$')
 		plt.ylabel(r'$y$')
+		plt.title(r'$\tau = %.2f$' %time)
 		plt.axis('scaled')
 		plt.xlim([0.,mesh.L_x])
 		plt.ylim([0.,mesh.L_y])
-		cb = plt.colorbar(mappable)
+		if len(fig.axes) > 1:
+				cax = fig.axes[1]
+				cb = plt.colorbar(mappable,ax=ax,cax=cax)
+		else:
+				cb = plt.colorbar(mappable,ax=ax)
+
 		cb.set_label(name)
 		plt.savefig(fileName)
 
