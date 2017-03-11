@@ -21,12 +21,15 @@ def make_frame(mesh,field,name,ax,plotMesh=False):
 		if plotMesh: voronoi_plot_2d(mesh.voronoi,ax)
 		
 		cmap = cm.get_cmap('RdBu')
-		for i in range(mesh.N):
+                mappable = cm.ScalarMappable(cmap=cmap)
+                mappable.set_array(field)
+                normalize = mpl.colors.Normalize(vmin=field.min(), vmax=field.max())
+                for i in range(mesh.N):
 				region_index = mesh.voronoi.point_region[i] # Index of Voronoi region corresponding to site i
 				region_vertex_index = mesh.voronoi.regions[region_index]
 				if not -1 in region_vertex_index:
 						polygon = [mesh.voronoi.vertices[k] for k in region_vertex_index]
-						im=plt.fill(*zip(*polygon),color=cmap(field[i%mesh.N])) # Colours in the ith polygon with corresponding colour data from cmap(field)
+						im=plt.fill(*zip(*polygon),color=cmap(normalize(field[i%mesh.N]))) # Colours in the ith polygon with corresponding colour data from cmap(field)
 		
 		plt.xlabel(r'$x$')
 		plt.ylabel(r'$y$')
@@ -34,8 +37,6 @@ def make_frame(mesh,field,name,ax,plotMesh=False):
 		plt.axis('scaled')
 		plt.xlim([0.,mesh.L_x])
 		plt.ylim([0.,mesh.L_y])
-		mappable = cm.ScalarMappable(cmap=cmap)
-		mappable.set_array(field)
 		if len(fig.axes) > 1:
 				cax = fig.axes[1]
 				plt.colorbar(mappable,ax=ax,cax=cax)
@@ -46,7 +47,30 @@ def make_frame(mesh,field,name,ax,plotMesh=False):
 		plt.pause(1e-6)
 
 
+def save_frame(mesh,field,name,fileName,plotMesh=False):
 
+		# Plots the mesh and colours
+		if plotMesh: voronoi_plot_2d(mesh.voronoi)
+		
+		cmap = cm.get_cmap('RdBu')
+		mappable = cm.ScalarMappable(cmap=cmap)
+		mappable.set_array(field)
+		normalize = mpl.colors.Normalize(vmin=field.min(), vmax=field.max())
+		for i in range(mesh.N):
+				region_index = mesh.voronoi.point_region[i] # Index of Voronoi region corresponding to site i
+				region_vertex_index = mesh.voronoi.regions[region_index]
+				if not -1 in region_vertex_index:
+						polygon = [mesh.voronoi.vertices[k] for k in region_vertex_index]
+						im=plt.fill(*zip(*polygon),color=cmap(normalize(field[i%mesh.N]))) # Colours in the ith polygon with corresponding colour data from cmap(field)
+		
+		plt.xlabel(r'$x$')
+		plt.ylabel(r'$y$')
+		plt.axis('scaled')
+		plt.xlim([0.,mesh.L_x])
+		plt.ylim([0.,mesh.L_y])
+		cb = plt.colorbar(mappable)
+		cb.set_label(name)
+		plt.savefig(fileName)
 
 
 

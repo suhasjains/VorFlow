@@ -35,10 +35,13 @@ for i in range(N):
 
 t = 0.
 tprint = 0.
-plt.ion()
-ax = plt.gca()
+#plt.ion()
+#ax = plt.gca()
+i = 0;
 while t < Tend:
 		data = time_step(mesh,data,dt,nu)
-	        make_frame(mesh,data.u_vel**2 + data.v_vel**2,'Energy',ax,False)
-		mesh.update_mesh(data, dt)
+	        #make_frame(mesh,data.u_vel**2 + data.v_vel**2,'Energy',ax,False)
+                save_frame(mesh,data.u_vel**2 + data.v_vel**2,'Energy','output'+'{:04d}'.format(i)+'.png',True)
+                mesh.update_mesh(data, dt)
 		t += dt
+                i += 1;
