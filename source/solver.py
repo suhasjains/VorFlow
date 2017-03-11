@@ -201,7 +201,8 @@ def time_step(mesh,data,dt,nu):
 				data.v_vel = v_star - Gy.dot(q);
 				#tic = timeit.default_timer()
 				#print 'Correct velocity = '+str(tic-toc)
-				
+				data.press = q/dt;
+						
 		metatoc = timeit.default_timer()
 		print 'Solving Complete: '+'{:.2e}'.format(metatoc-metatic)+' s'
 		
