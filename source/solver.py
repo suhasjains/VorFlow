@@ -73,18 +73,18 @@ def build_matrices(mesh):
 	L = sp.csr_matrix(L)
 	Gx = sp.csr_matrix(Gx)
 	Gy = sp.csr_matrix(Gy)
-	Dx
+	
 	return Dx, Dy, L, Gx, Gy
 
 
 def time_step(mesh,data,dt,nu):
 	
-		metatic = timeit.default_timer()
-	
 		Dx, Dy, L, Gx, Gy = build_matrices(mesh);
 		N = mesh.N
+		
+		metatic = timeit.default_timer()		
 
-		solver_type = 'CrankNicolson'
+		solver_type = 'BEuler'
 
 		if (solver_type == 'CrankNicolson'):
 				# Solution for u by pressure projection
@@ -175,28 +175,34 @@ def time_step(mesh,data,dt,nu):
 		elif solver_type == 'BEuler': # AW
 				# Solve using Backward Euler (no dt restriction)
 				# Inefficient, but robust.
-
+				
 				#I = np.identity((N))
 				I = sp.eye(N)
-				
+				#tic = timeit.default_timer()
 				#u_star = np.linalg.solve(I - nu * dt * L, data.u_vel);
-				u_star = lp.gmres(I - nu * dt * L, data.u_vel);
+				u_star = lp.spsolve(I - nu * dt * L, data.u_vel);
 				#v_star = np.linalg.solve(I - nu * dt * L, data.v_vel);
-				v_star = lp.gmres(I - nu * dt * L, data.v_vel);
-			
+				v_star = lp.spsolve(I - nu * dt * L, data.v_vel);
+				#toc = timeit.default_timer()
+				#print 'Solve I - nuL = '+str(toc-tic)
 				#Div = np.dot(Dx,u_star) + np.dot(Dy,v_star);
 				Div = Dx.dot(u_star) + Dy.dot(v_star);
 				#DG = np.dot(Dx,Gx) + np.dot(Dy,Gy); # == L ???  Nope...
 				DG = Dx*Gx + Dy*Gy; # == L ???  Nope...
-			
+				#tic = timeit.default_timer()
+				#print 'DG = '+str(tic-toc)
 				#q = np.linalg.solve(DG,Div);
-				q, B = lp.gmres(DG,Div);
-			
+				q = lp.spsolve(DG,Div);
+				#toc = timeit.default_timer()
+				#print 'Project = '+str(toc-tic)
 				#data.u_vel = u_star - np.dot(Gx,q);
 				data.u_vel = u_star - Gx.dot(q);
 				#data.v_vel = v_star - np.dot(Gy,q);
 				data.v_vel = v_star - Gy.dot(q);
-		
+				#tic = timeit.default_timer()
+				#print 'Correct velocity = '+str(tic-toc)
+				data.press = q/dt;
+						
 		metatoc = timeit.default_timer()
 		print 'Solving Complete: '+'{:.2e}'.format(metatoc-metatic)+' s'
 		

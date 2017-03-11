@@ -1,0 +1,5 @@
+echo -n "How many files to compile?"
+read text
+echo -n "Enter GIF Name:"
+read name
+convert -delay 1x4 `seq -f ./%04g.png 1 $text`  -coalesce -layers OptimizeTransparency ${name}.gif
