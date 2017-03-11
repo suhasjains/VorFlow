@@ -1,6 +1,6 @@
 import numpy as np
 import sys
-sys.path.append('../')
+sys.path.append('../../')
 import timeit
 from mesh import *
 from solver import *
