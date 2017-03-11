@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 from scipy.spatial import voronoi_plot_2d
