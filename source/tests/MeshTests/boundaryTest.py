@@ -7,12 +7,12 @@ from solver import *
 from scipy.spatial import voronoi_plot_2d
 
 
-N = 100;
+N = 16;
 L = 1.;
 
 
 
-mesh = Mesh(N,L,L,np.ones(4),'random'); #Use either "random", "cartesian" or "nonuniform" for mesh_type
+mesh = Mesh(N,L,L,np.ones(4),'cartesian'); #Use either "random", "cartesian" or "nonuniform" for mesh_type
 
 test = ['FAIL!', 'PASS!'];
 
@@ -57,5 +57,6 @@ test = ['FAIL!', 'PASS!'];
 #voronoi_plot_2d(mesh.voronoi,ax);
 #plt.plot(mesh.site[:,0], mesh.site[:,1],'o');
 voronoi_plot_2d(mesh.voronoi)
-#plt.show();
-plt.pause(5)
+plt.hold(True);
+plt.show();
+#plt.pause(5)

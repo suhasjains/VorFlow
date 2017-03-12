@@ -64,6 +64,8 @@ class Mesh:
 				self.grad_area_t = range(N);
 				self.is_boundary = range(N);
 				self.boundary_cutting_ridge = np.zeros([N,2]);
+				self.xBoundary_points = np.zeros([N,2]);
+				self.yBoundary_points = np.zeros([N,2]);
 				self.voronoi = 0; # Make dataspace for storing Scipy Voronoi object for easy plotting
 				
 				self.generate_mesh();
@@ -138,7 +140,7 @@ class Mesh:
 
 
 
-				# determine boundary cutting ridges
+				# determine boundary cutting ridges and boundary points
 				if not self.is_periodic:
 					P1 = Point(0.,0.);
 					P2 = Point(self.L_x,0.);
@@ -165,33 +167,53 @@ class Mesh:
 							site_site_line = Line(site_0,site_1);
 							boundary_vertex_line = site_site_line.perpendicular_line(node);
 
-							dist = 0.;
+							print "Yes"
+
+							dist = float(10**6);
 							if intersection(North,boundary_vertex_line):
-								north_point = intersection(North,boundary_vertex_line)[0];
-								dist = node.distance(north_point);
-								self.boundary_cutting_ridge[boundary_ridge_index[x[0]]] = 1.;	#North
-								#self.boundary_cutting_ridge[boundary_ridge_index[voronoi.ridge_points[x.multi_index[0]][1-x.multi_index[1]]]] = 1.;
+								boundary_point = intersection(North,boundary_vertex_line)[0];
+								self.xBoundary_points[x[0],boundary_ridge_index[x[0]]] = float(boundary_point.x);	
+								self.yBoundary_points[x[0],boundary_ridge_index[x[0]]] = float(boundary_point.y);	
+								#print str(float(boundary_point.x)) + " " + str(float(boundary_point.y));
+								dist = node.distance(boundary_point);
+								self.boundary_cutting_ridge[x[0],boundary_ridge_index[x[0]]] = 1.;	#North
 							if intersection(South,boundary_vertex_line):
-								south_point = intersection(South,boundary_vertex_line)[0];
-								if node.distance(south_point) < dist:
-									self.boundary_cutting_ridge[boundary_ridge_index[x[0]]] = 2.; #South
-									#self.boundary_cutting_ridge[boundary_ridge_index[voronoi.ridge_points[x.multi_index[0]][1-x.multi_index[1]]]] = 2.;
+								boundary_point = intersection(South,boundary_vertex_line)[0];
+								if node.distance(boundary_point) < dist:
+									self.xBoundary_points[x[0],boundary_ridge_index[x[0]]] = float(boundary_point.x);	
+									self.yBoundary_points[x[0],boundary_ridge_index[x[0]]] = float(boundary_point.y);	
+									#print str(float(boundary_point.x)) + " " + str(float(boundary_point.y));
+									dist = node.distance(boundary_point);
+									self.boundary_cutting_ridge[x[0],boundary_ridge_index[x[0]]] = 2.; #South
 							if intersection(East,boundary_vertex_line):
-								east_point = intersection(East,boundary_vertex_line)[0];
-								if node.distance(east_point) < dist:
-									self.boundary_cutting_ridge[boundary_ridge_index[x[0]]] = 3.; #East
-									#self.boundary_cutting_ridge[boundary_ridge_index[voronoi.ridge_points[x.multi_index[0]][1-x.multi_index[1]]]] = 3.;
+								boundary_point = intersection(East,boundary_vertex_line)[0];
+								#print "yes east"
+								#print str(float(boundary_point.x)) + " " + str(float(boundary_point.y));
+								if node.distance(boundary_point) < dist:
+									self.xBoundary_points[x[0],boundary_ridge_index[x[0]]] = float(boundary_point.x);	
+									self.yBoundary_points[x[0],boundary_ridge_index[x[0]]] = float(boundary_point.y);	
+									#print str(float(boundary_point.x)) + " " + str(float(boundary_point.y));
+									dist = node.distance(boundary_point);
+									self.boundary_cutting_ridge[x[0],boundary_ridge_index[x[0]]] = 3.; #East
 							if intersection(West,boundary_vertex_line):
-								west_point = intersection(West,boundary_vertex_line)[0];
-								if node.distance(west_point) < dist:
-									self.boundary_cutting_ridge[boundary_ridge_index[x[0]]] = 4.; #West
-									#self.boundary_cutting_ridge[boundary_ridge_index[voronoi.ridge_points[x.multi_index[0]][1-x.multi_index[1]]]] = 4.;
+								boundary_point = intersection(West,boundary_vertex_line)[0];
+								#print "yes west"
+								#print str(float(boundary_point.x)) + " " + str(float(boundary_point.y));
+								if node.distance(boundary_point) < dist:
+									self.xBoundary_points[x[0],boundary_ridge_index[x[0]]] = float(boundary_point.x);	
+									self.yBoundary_points[x[0],boundary_ridge_index[x[0]]] = float(boundary_point.y);	
+									#print str(float(boundary_point.x)) + " " + str(float(boundary_point.y));
+									dist = node.distance(boundary_point);
+									self.boundary_cutting_ridge[x[0],boundary_ridge_index[x[0]]] = 4.; #West
 
-
+							#print str(float(boundary_point.x)) + " " + str(float(boundary_point.y));
+							print str(self.xBoundary_points[x[0],boundary_ridge_index[x[0]]]) + " " + str(self.yBoundary_points[x[0],boundary_ridge_index[x[0]]]);
+						
+							#print str(self.xBoundary_points[x[0]]) + " " + str(self.yBoundary_points[x[0]]);
+							#print self.boundary_cutting_ridge[boundary_ridge_index[x[0]]];
 							
 							#print boundary_ridge_index[x[0]];
 							boundary_ridge_index[x[0]] += 1;
-							#boundary_ridge_index[voronoi.ridge_points[x.multi_index[0]][1-x.multi_index[1]]] += 1;
 
 
 
