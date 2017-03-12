@@ -1,8 +1,6 @@
 import numpy as np
 import timeit
 from scipy.spatial import *
-from shapely.geometry import Polygon, Point
-from sympy.geometry import *
 
 
 class Mesh:
