@@ -6,12 +6,12 @@ from plotting import *
 from solver import *
 
 
-N = 16;
+N = 100;
 L = 1.;
 
 
 
-mesh = Mesh(N,L,L,np.zeros(4),'cartesian'); #Use either "random", "cartesian" or "nonuniform" for mesh_type
+mesh = Mesh(N,L,L,np.ones(4),'cartesian'); #Use either "random", "cartesian" or "nonuniform" for mesh_type
 
 test = ['FAIL!', 'PASS!'];
 
@@ -48,8 +48,8 @@ elif mesh.mesh_type == 'nonuniform':
                 # face_center
                 print 'face_center: '+test[np.sqrt(mesh.face_center[0][3,0]**2 + mesh.face_center[0][3,1]**2) == (0.375**2 - 0.125**2)/2. ];
 
-#plt.ion();
-#ax = plt.gca();
+plt.ion();
+ax = plt.gca();
 
-#plot_mesh(mesh,ax);
+plot_mesh(mesh,ax);
 

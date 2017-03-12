@@ -63,9 +63,12 @@ class Mesh:
 				self.grad_area = range(N);
 				self.grad_area_t = range(N);
 				self.is_boundary = range(N);
-				self.boundary_cutting_ridge = np.zeros([N,2]);
-				self.xBoundary_points = np.zeros([N,2]);
-				self.yBoundary_points = np.zeros([N,2]);
+                                #This will be a list of dictionaries
+                                self.boundary = range(N);
+
+				#self.boundary_cutting_ridge = np.zeros([N,2]);
+				#self.xBoundary_points = np.zeros([N,2]);
+				#self.yBoundary_points = np.zeros([N,2]);
 				self.voronoi = 0; # Make dataspace for storing Scipy Voronoi object for easy plotting
 				
 				self.generate_mesh();
@@ -166,18 +169,18 @@ class Mesh:
 
 
 				# determine boundary cutting ridges and boundary points
-				if not self.is_periodic:
-					P1 = Point(0.,0.);
-					P2 = Point(self.L_x,0.);
-					P3 = Point(self.L_x,self.L_y);	
-					P4 = Point(0.,self.L_y);	
+			#	if not self.is_periodic:
+			#		P1 = Point(0.,0.);
+			#		P2 = Point(self.L_x,0.);
+			#		P3 = Point(self.L_x,self.L_y);	
+			#		P4 = Point(0.,self.L_y);	
 		
-					domain = Polygon(P1,P2,P3,P4);
+			#		domain = Polygon(P1,P2,P3,P4);
 	
-					South = Segment(P1,P2);
-					East = Segment(P2,P3);
-					North = Segment(P3,P4);
-					West = Segment(P4,P1);	
+			#		South = Segment(P1,P2);
+			#		East = Segment(P2,P3);
+			#		North = Segment(P3,P4);
+			#		West = Segment(P4,P1);	
 
 			#		#print voronoi.ridge_points;
 			#	
@@ -326,15 +329,31 @@ class Mesh:
 				neighbor_index = np.zeros(self.N, dtype=int);
 				for i in range(self.N):
 						self.neighbor[i] = np.zeros(self.N_neighbor[i],dtype=int);
-                                
+                                                self.boundary[i] = {};
+
 				x = np.nditer(voronoi.ridge_points, flags=['multi_index'])
 				while not x.finished:
 						if x[0] < self.N:
 								self.neighbor[x[0]][neighbor_index[x[0]]] = voronoi.ridge_points[x.multi_index[0]][1-x.multi_index[1]];
+        
+                                                                if not self.is_periodic:
+                                                                     neighbor = self.neighbor[x[0]][neighbor_index[x[0]]]
+                                                                     neighbor_point = voronoi.points[neighbor]
+                                                                     if neighbor_point[0] < 0:
+                                                                         self.boundary[x[0]][neighbor_index[x[0]]] = "West"
+                                                                     elif neighbor_point[0] > self.L_x:
+                                                                         self.boundary[x[0]][neighbor_index[x[0]]] = "East"
+                                                                     elif neighbor_point[1] < 0:
+                                                                         self.boundary[x[0]][neighbor_index[x[0]]] = "South"
+                                                                     elif neighbor_point[1] > self.L_y:
+                                                                         self.boundary[x[0]][neighbor_index[x[0]]] = "North"
+                                                                     else:
+                                                                         self.boundary[x[0]][neighbor_index[x[0]]] = "Internal"
+
 								neighbor_index[x[0]] += 1;
 						
 						x.iternext()
-
+				
 				if profile:
 						toc = timeit.default_timer()
 						print '1: '+'{:.2e}'.format((toc-tic)/self.N)+' s'
@@ -436,6 +455,7 @@ class Mesh:
 								XY = np.sqrt(np.sum(np.square(Y-X)));
 								T = 0.5 * (X + Y) - self.face_center[i][j,:] - X; # Tangent vector
 								self.grad_area[i][j,:] = self.face[i][j] * (0.5*(Y - X) + T) / XY
+
 				
 				
 				# GradAreaT 
@@ -458,9 +478,17 @@ class Mesh:
 						tic = timeit.default_timer()
 
 				# isBoundary - O(N)
-				for i in range(self.N):
-						self.is_boundary[i] = False; # Extend this after Infinite domain works.
-
+                                if self.is_periodic:
+				    for i in range(self.N):
+						self.is_boundary[i] = False;
+                                else:
+				    for i in range(self.N):
+                                        b = self.boundary[i]
+					self.is_boundary[i] = False; 
+                                        for j in range(self.N_neighbor[i]):
+                                            if not b[j] == "Internal":
+					        self.is_boundary[i] = True; 
+                                   
 
 				# Fix neighbours and sew edge connectivity together <3
 				if self.is_periodic:

@@ -7,7 +7,7 @@ from solver import *
 from scipy.spatial import voronoi_plot_2d
 
 
-N = 10;
+N = 100;
 L = 1.;
 
 
@@ -57,6 +57,8 @@ test = ['FAIL!', 'PASS!'];
 #voronoi_plot_2d(mesh.voronoi,ax);
 #plt.plot(mesh.site[:,0], mesh.site[:,1],'o');
 voronoi_plot_2d(mesh.voronoi)
-plt.hold(True);
+plt.hold();
+plt.xlim([0,L]);
+plt.ylim([0,L]);
 plt.show();
 #plt.pause(5)
