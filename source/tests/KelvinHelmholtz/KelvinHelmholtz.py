@@ -6,7 +6,7 @@ from plotting import *
 from solver import *
 import pickle
 
-Nx = 120;
+Nx = 150;
 
 N = Nx**2
 L_x = 1.

@@ -176,31 +176,24 @@ def time_step(mesh,data,dt,nu):
 				# Solve using Backward Euler (no dt restriction)
 				# Inefficient, but robust.
 				
-				#I = np.identity((N))
 				I = sp.eye(N)
-				#tic = timeit.default_timer()
-				#u_star = np.linalg.solve(I - nu * dt * L, data.u_vel);
+				
 				u_star = lp.spsolve(I - nu * dt * L, data.u_vel);
-				#v_star = np.linalg.solve(I - nu * dt * L, data.v_vel);
 				v_star = lp.spsolve(I - nu * dt * L, data.v_vel);
-				#toc = timeit.default_timer()
-				#print 'Solve I - nuL = '+str(toc-tic)
-				#Div = np.dot(Dx,u_star) + np.dot(Dy,v_star);
+				
 				Div = Dx.dot(u_star) + Dy.dot(v_star);
-				#DG = np.dot(Dx,Gx) + np.dot(Dy,Gy); # == L ???  Nope...
 				DG = Dx*Gx + Dy*Gy; # == L ???  Nope...
-				#tic = timeit.default_timer()
-				#print 'DG = '+str(tic-toc)
-				#q = np.linalg.solve(DG,Div);
 				q = lp.spsolve(DG,Div);
-				#toc = timeit.default_timer()
-				#print 'Project = '+str(toc-tic)
-				#data.u_vel = u_star - np.dot(Gx,q);
 				data.u_vel = u_star - Gx.dot(q);
-				#data.v_vel = v_star - np.dot(Gy,q);
 				data.v_vel = v_star - Gy.dot(q);
-				#tic = timeit.default_timer()
-				#print 'Correct velocity = '+str(tic-toc)
+				
+				try:
+					data.tracer;
+				except AttributeError:
+					toodle=0;
+				else: # Well then diffuse the tracer already
+					data.tracer = lp.spsolve(I - nu * dt * L + data.u_vel*Gx + data.v_vel*Gy, data.tracer)
+				
 				data.press = q/dt;
 						
 		metatoc = timeit.default_timer()

@@ -7,7 +7,7 @@ from solver import *
 import pickle
 
 # AW --
-Nx = 120
+Nx = 100
 N = Nx**2
 L_x = 2.*np.pi
 L_y = 2.*np.pi
