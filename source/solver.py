@@ -192,7 +192,10 @@ def time_step(mesh,data,dt,nu):
 				except AttributeError:
 					toodle=0;
 				else: # Well then diffuse the tracer already
-					data.tracer = lp.spsolve(I - nu * dt * L + data.u_vel*Gx + data.v_vel*Gy, data.tracer)
+					Visc = I - nu * dt * L;
+					VDivX = sp.csr_matrix((Gx.transpose().dot(data.u_vel),(range(N),range(N)))); # Gx^T * u_x on the diagonal
+					VDivY = sp.csr_matrix((Gy.transpose().dot(data.v_vel),(range(N),range(N))));
+					data.tracer = lp.spsolve(Visc + VDivX + VDivY, data.tracer)
 				
 				data.press = q/dt;
 						
