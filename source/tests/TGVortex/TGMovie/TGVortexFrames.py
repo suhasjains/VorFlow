@@ -4,6 +4,7 @@ sys.path.append('../../../')
 from mesh import *
 from plotting import *
 from solver import *
+import pickle
 
 # AW --
 Nx = 120
@@ -26,7 +27,7 @@ for i in range(N):
 t = 0.
 tprint = 0.
 data = time_step(mesh,data,0,nu)  # Initial projection...
-ax = plt.gca()
+#ax = plt.gca()
 i = 0;
 while t < Tend:
 	if t >= tprint:
@@ -35,9 +36,13 @@ while t < Tend:
 		for j in range(N):
 			u_exact[j] = np.sin(mesh.centroid[j][0])*np.cos(mesh.centroid[j][1])* np.exp(-2.*nu*t)
 		
-		save_frame(mesh,0.5*(data.u_vel**2+data.v_vel**2),'Energy',t,ax,'output/energy'+'{:04d}'.format(i)+'.png',False)
-		save_frame(mesh,data.press,'Pressure',t,ax,'output/pressure'+'{:04d}'.format(i)+'.png',False)
-		save_frame(mesh,np.abs(data.u_vel-u_exact),'Error',t,ax,'output/error'+'{:04d}'.format(i)+'.png',False)
+		#save_frame(mesh,0.5*(data.u_vel**2+data.v_vel**2),'Energy',t,ax,'output/energy'+'{:04d}'.format(i)+'.png',False)
+		#save_frame(mesh,data.press,'Pressure',t,ax,'output/pressure'+'{:04d}'.format(i)+'.png',False)
+		#save_frame(mesh,np.abs(data.u_vel-u_exact),'Error',t,ax,'output/error'+'{:04d}'.format(i)+'.png',False)
+		filename = 'output/output'+'{:04d}'.format(i)+'.p';
+		fileObject = open(filename,'wb')
+		pickle.dump([mesh,data,t,u_exact],fileObject);
+		fileObject.close()
 		i += 1;
 	
 	data = time_step(mesh,data,dt,nu)
