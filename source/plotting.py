@@ -44,7 +44,7 @@ def make_frame(mesh,field,name,ax,plotMesh=False):
 				plt.colorbar(mappable,ax=ax)
 
 		plt.show()
-		plt.pause(1e-6)
+		#plt.pause(1e-6)
 
 
 def save_frame(mesh,field,name,time,ax,fileName,plotMesh=False):
