@@ -7,7 +7,7 @@ from solver import *
 from scipy.spatial import voronoi_plot_2d
 
 
-N = 100;
+N = 10;
 L = 1.;
 
 
