@@ -14,7 +14,7 @@ L_y = 1.
 dt = 1./Nx;
 dTPlot = 0.05
 Tend = 10.
-nu = 1e-4
+nu = 1e-6
 rho = 1.
 
 mesh = Mesh(N,L_x,L_y,np.zeros(4),'random')
@@ -37,7 +37,7 @@ for i in range(N):
 
 
 t = 0.
-data = time_step(mesh,data,0.,nu) # Project Pressure...
+#data = time_step(mesh,data,0.,nu) # Project Pressure...
 tprint = 0.
 #ax = plt.gca()
 i = 0;

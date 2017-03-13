@@ -176,7 +176,7 @@ def time_step(mesh,data,dt,nu):
 				# Solve using Backward Euler (no dt restriction)
 				# Inefficient, but robust.
 				
-				I = sp.eye(N)
+				I = sp.eye(N,format='csr')
 				
 				u_star = lp.spsolve(I - nu * dt * L, data.u_vel);
 				v_star = lp.spsolve(I - nu * dt * L, data.v_vel);
@@ -193,9 +193,9 @@ def time_step(mesh,data,dt,nu):
 					toodle=0;
 				else: # Well then diffuse the tracer already
 					Visc = I - nu * dt * L;
-					VDivX = sp.csr_matrix((Gx.transpose().dot(data.u_vel),(range(N),range(N)))); # Gx^T * u_x on the diagonal
-					VDivY = sp.csr_matrix((Gy.transpose().dot(data.v_vel),(range(N),range(N))));
-					data.tracer = lp.spsolve(Visc + VDivX + VDivY, data.tracer)
+					#VDivX = dt * sp.csr_matrix((data.u_vel,(range(N),range(N))))*Dx; 
+					#VDivY = dt * sp.csr_matrix((data.v_vel,(range(N),range(N))))*Dy;
+					data.tracer = lp.spsolve(Visc, data.tracer) # Just diffusive
 				
 				data.press = q/dt;
 						
