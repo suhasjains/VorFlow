@@ -217,7 +217,7 @@ def time_step(mesh,data,dt,nu,BCu=[0,0,0,0],BCuvals=[0,0,0,0],BCv=[0,0,0,0],BCvv
 				rhsPressure_v = 2.*Dy.dot(v_star_star)
 				#print('3b')
 				lhsPressure = lhsPressure_x + lhsPressure_y
-				rhsPressure = rhsPressure_u + rhsPressure_v + 2.*dt*rhsDxu + 2.*dt*rhsDyv - dt*rhsLp
+				rhsPressure = rhsPressure_u + rhsPressure_v + 2.*rhsDxu + 2.*rhsDyv - dt*rhsLp
 				#print(sp.sparse.issparse(lhsPressure))
 				#P_tild, res, ra, s = np.linalg.lstsq(lhsPressure, rhsPressure)
 				#print('4')
