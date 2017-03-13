@@ -6,35 +6,25 @@ from plotting import *
 from solver import *
 import pickle
 
-Nx = 150;
+Nx = 10;
 
 N = Nx**2
 L_x = 1.
 L_y = 1.
-dt = 1./Nx;
-dTPlot = 0.05
+dt = 1./Nx
+dTPlot = 5*dt
 Tend = 10.
 nu = 1e-6
 rho = 1.
 
-mesh = Mesh(N,L_x,L_y,np.zeros(4),'random')
+BCu = [1,1,1,1]
+BCuvals = [0.,0.,0.,1.]
+BCv = [1,1,1,1]
+BCvvals = [0.,0.,0.,0.]
+
+mesh = Mesh(N,L_x,L_y,BCu+BCv,'random')
 data = Data(N);
 data.tracer = np.zeros(N);
-
-A = 1.;
-uPrime = A/10.;
-k_x = 2.;
-width = 1./3.;
-centre = 0.5;
-smoothing = 200.;
-
-for i in range(N):
-		y = mesh.centroid[i][1] - centre;
-		x = mesh.centroid[i][0];
-		data.u_vel[i] = 0.5*A*(np.tanh(smoothing*(y+0.5*width)) - np.tanh(smoothing*(y-0.5*width))) - 0.5*A; 
-		data.v_vel[i] = uPrime * np.sin(2.*np.pi*k_x * x/L_x)
-		data.tracer[i] = data.u_vel[i]/A + 0.5
-
 
 t = 0.
 #data = time_step(mesh,data,0.,nu) # Project Pressure...
@@ -53,6 +43,6 @@ while t < Tend:
 			fileObject.close()
 			i += 1
 		
-		data = time_step(mesh,data,dt,nu)	
+		data = time_step(mesh,data,dt,nu,BCu,BCuvals,BCv,BCvvals)	
 		mesh.update_mesh(data, dt)
 		t += dt
