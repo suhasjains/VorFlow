@@ -36,7 +36,7 @@ plot(dt, error, 'o-', 'LineWidth', 3)
 xlabel('$\Delta t \ [s]$', 'interpreter', 'latex', 'fontsize', 20)
 ylabel('$Error \ [\%]$', 'interpreter', 'latex', 'fontsize', 20)
 set(gca, 'fontsize', 15)
-set(gca, 'xscale', 'log')
+%set(gca, 'xscale', 'log')
 %set(gca, 'yscale', 'log')
 box on;
 % xx = [50 500];
@@ -45,3 +45,4 @@ box on;
 L = legend('$Error$', '$1^{st} \ Order$');
 set(L, 'interpreter', 'latex', 'fontsize', 15)
 
+slope = diff(error)./diff(dt);

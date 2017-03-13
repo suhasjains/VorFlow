@@ -1,6 +1,6 @@
 import numpy as np
 import sys
-sys.path.append('../')
+sys.path.append('../../../')
 from mesh import *
 from plotting import *
 from solver import *
@@ -9,14 +9,14 @@ from solver import *
 #N = 80**2
 L_x = 2.*np.pi
 L_y = 2.*np.pi
-dt = 0.01
+#dt = 0.01
 Tend = 0.1
 nu = 0.1
 rho = 1.
 
-NN = 250
+NN = 50
 #dt_vec = np.array([10**-8., 10**-7., 10**-6., 10**-5., 10**-4., 10**-3., 0.005, 0.006, 0.007, 0.008, 0.009, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1., 2., 3.])
-dt_vec = np.linspace(10**-5., 0.1, 100)
+dt_vec = np.linspace(10**-3., 10**-2., 100)
 for dt in dt_vec:
 	N = NN**2
 	mesh = Mesh(N,L_x,L_y,np.zeros(4),'random')
@@ -56,7 +56,7 @@ for dt in dt_vec:
 
 
 	# Write error to file
-	filename = 'TGVortexErrorTimeConstantTend.txt'
+	filename = 'TGVortexErrorTimeConstantTendCrankN.txt'
 	target = open(filename, 'a')
 	line = np.array([dt, error])
 	target.write("\t".join(str(elem) for elem in line))
