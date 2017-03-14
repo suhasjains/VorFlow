@@ -25,40 +25,45 @@ def build_matrices(mesh):
 			#print "N",mesh.face[i]
 			for j in range(mesh.N_neighbor[i]):
 					k = mesh.neighbor[i][j]
-					# Comment out first, don't delete
 					if type == 0:
 							mfac = mesh.face[i][j]
 							mlen = np.sqrt(mesh.length[i][j,0]**2 + mesh.length[i][j,1]**2)
 							coeff = mfac/mlen/mesh.area[i]
 							# Div, x
-							Dx[i,k] += coeff*(mesh.length[i][j,0]-mesh.face_center[i][j,0])
+							if k < N:
+								Dx[i,k] += coeff*(mesh.length[i][j,0]-mesh.face_center[i][j,0])
 							Dx[i,i] -= coeff*(mesh.length[i][j,0]-mesh.face_center[i][j,0])
 							# Div, y
-							Dy[i,k] += coeff*(mesh.length[i][j,1]-mesh.face_center[i][j,1])
+							if k < N:
+								Dy[i,k] += coeff*(mesh.length[i][j,1]-mesh.face_center[i][j,1])
 							Dy[i,i] -= coeff*(mesh.length[i][j,1]-mesh.face_center[i][j,1])
 							# Laplacian
-							L[i,k] += coeff
+							if k < N:
+								L[i,k] += coeff
 							L[i,i] -= coeff
 							# Grad, x
-							Gx[i,k] += coeff*mesh.face_center[i][j,0]
+							if k < N:
+								Gx[i,k] += coeff*mesh.face_center[i][j,0]
 							Gx[i,i] -= coeff*mesh.face_center[i][j,0]
 							# Grad, y
-							Gy[i,k] += coeff*mesh.face_center[i][j,1]
+							if k < N:
+								Gy[i,k] += coeff*mesh.face_center[i][j,1]
 							Gy[i,i] -= coeff*mesh.face_center[i][j,1]
-					## Potential new matrices
 					else:
 							mlen = np.sqrt(np.sum(np.square(mesh.length[i][j])))
+							if k < N:
 							# Div, x
-							Dx[i,k] += mesh.grad_area[i][j][0] / mesh.area[i]
+								Dx[i,k] += mesh.grad_area[i][j][0] / mesh.area[i]
 							# Div, y
-							Dy[i,k] += mesh.grad_area[i][j][1] / mesh.area[i]
+								Dy[i,k] += mesh.grad_area[i][j][1] / mesh.area[i]
 							# Laplacian
-							L[i,k] += mesh.face[i][j]/mlen/mesh.area[i]
+								L[i,k] += mesh.face[i][j]/mlen/mesh.area[i]
 							L[i,i] -= mesh.face[i][j]/mlen/mesh.area[i]
 							## Grad, x
-							Gx[i,k] -= mesh.grad_area_t[i][j][0] / mesh.area[i]
+							if k < N:
+								Gx[i,k] -= mesh.grad_area_t[i][j][0] / mesh.area[i]
 							# Grad, y
-							Gy[i,k] -= mesh.grad_area_t[i][j][1] / mesh.area[i]
+								Gy[i,k] -= mesh.grad_area_t[i][j][1] / mesh.area[i]
 			if type == 1:
 					Dx[i,i] += mesh.grad_area[i][-1][0] / mesh.area[i]
 					Dy[i,i] += mesh.grad_area[i][-1][1] / mesh.area[i]
@@ -77,6 +82,7 @@ def build_matrices(mesh):
 	return Dx, Dy, L, Gx, Gy
 
 
+<<<<<<< HEAD
 def time_step(mesh,data,dt,nu):
 		
 		metatic = timeit.default_timer()
@@ -84,9 +90,106 @@ def time_step(mesh,data,dt,nu):
 		Dx, Dy, L, Gx, Gy = build_matrices(mesh);
 		N = mesh.N
 		
+=======
+
+def build_rhs(mesh,u,v,p,BCu,BCuvals,BCv,BCvvals):
+	# Initialize vectors
+	N = mesh.N
+	rhsDxu = np.zeros(N) 
+	rhsDyv = np.zeros(N) 
+	rhsLu = np.zeros(N) 
+	rhsLv = np.zeros(N)
+	rhsLp = np.zeros(N) 
+	rhsGxp = np.zeros(N) 
+	rhsGyp = np.zeros(N) 
+	type = 1
+	uHold = 0
+	vHold = 0
+	pHold = 0
+	if ~mesh.is_periodic:
+		for i in range(N):
+				for j in range(mesh.N_neighbor[i]):
+					# Correct ghost cell velocities and pressures (BC order West, East, South, North) (1=Dirichlet, 2=Neumann)
+					if mesh.boundary[i][j] == "West":
+						if BCu[0] == 1:
+							uHold = 2*BCuvals[0]-u[i]
+							pHold = p[i]
+						#else if BCu[0] == 2:
+						if BCv[0] == 1:
+							vHold = 2*BCvvals[0]-v[i]
+						#else if BCv[0] == 2:
+					elif mesh.boundary[i][j] == "East":
+						if BCu[1] == 1:
+							uHold = 2*BCuvals[1]-u[i]
+							pHold = p[i]
+						#else if BCu[1] == 2:
+						if BCv[1] == 1:
+							vHold = 2*BCvvals[1]-v[i]
+						#else if BCv[1] == 2:
+					elif mesh.boundary[i][j] == "South":
+						if BCu[2] == 1:
+							uHold = 2*BCuvals[2]-u[i]
+						#else if BCu[2] == 2:
+						if BCv[2] == 1:
+							vHold = 2*BCvvals[2]-v[i]
+							pHold = p[i]
+						#else if BCv[2] == 2:
+					elif mesh.boundary[i][j] == "North":
+						if BCu[3] == 1:
+							uHold = 2*BCuvals[3]-u[i]
+						#else if BCu[3] == 2:
+						if BCv[3] == 1:
+							vHold = 2*BCvvals[3]-v[i]
+							pHold = p[i]
+						#else if BCv[3] == 2:
+					# Now the vectors
+					if type == 0:
+							mfac = mesh.face[i][j]
+							mlen = np.sqrt(mesh.length[i][j,0]**2 + mesh.length[i][j,1]**2)
+							coeff = mfac/mlen/mesh.area[i]
+							# Div, x
+							rhsDxu[i] += coeff*(mesh.length[i][j,0]-mesh.face_center[i][j,0])*uHold
+							# Div, y
+							rhsDyv[i] += coeff*(mesh.length[i][j,1]-mesh.face_center[i][j,1])*vHold
+							# Laplacian
+							rhsLu[i] += coeff*uHold
+							rhsLv[i] += coeff*vHold
+							rhsLp[i] += coeff*pHold
+							# Grad, x
+							rhsGxp[i] += coeff*mesh.face_center[i][j,0]*pHold
+							# Grad, y
+							rhsGyp[i] += coeff*mesh.face_center[i][j,1]*pHold
+					else:
+							mlen = np.sqrt(np.sum(np.square(mesh.length[i][j])))
+							# Div, x
+							rhsDxu[i] += mesh.grad_area[i][j][0] / mesh.area[i] * uHold
+							# Div, y
+							rhsDyv[i] += mesh.grad_area[i][j][1] / mesh.area[i] * vHold
+							# Laplacian
+							rhsLu[i] += mesh.face[i][j]/mlen/mesh.area[i] * uHold
+							rhsLv[i] += mesh.face[i][j]/mlen/mesh.area[i] * vHold
+							rhsLp[i] += mesh.face[i][j]/mlen/mesh.area[i] * pHold
+							## Grad, x
+							rhsGxp[i] -= mesh.grad_area_t[i][j][0] / mesh.area[i] * pHold
+							# Grad, y
+							rhsGyp[i] -= mesh.grad_area_t[i][j][1] / mesh.area[i] * pHold
+	
+	return rhsDxu, rhsDyv, rhsLu, rhsLv, rhsLp, rhsGxp, rhsGyp
+
+
+
+def time_step(mesh,data,dt,nu,BCu=[0,0,0,0],BCuvals=[0,0,0,0],BCv=[0,0,0,0],BCvvals=[0,0,0,0]):
+	
+		Dx, Dy, L, Gx, Gy = build_matrices(mesh);
+		N = mesh.N
+	
+		metatic = timeit.default_timer()	
+
+>>>>>>> 4c31a315af0ceadca96f0639cc81d330db1b9733
 		solver_type = 'BEuler'
 
 		if (solver_type == 'CrankNicolson'):
+				rhsDxu, rhsDyv, rhsLu, rhsLv, rhsLp, rhsGxp, rhsGyp = build_rhs(mesh,data.u_vel,data.v_vel,data.press,BCu,BCuvals,BCv,BCvvals)
 				# Solution for u by pressure projection
 				#I = np.identity((N))
 				I = sp.eye(N)
@@ -95,9 +198,9 @@ def time_step(mesh,data,dt,nu):
 				A1 = I - nu*dt*L/(2.)
 				A2 = I + nu*dt*L/(2.)
 				#rhs_u = -0.5*dt*np.dot(Gx, data.press) + np.dot(A2, data.u_vel)
-				rhs_u = -0.5*dt*Gx.dot(data.press) + A2.dot(data.u_vel)
+				rhs_u = -0.5*dt*Gx.dot(data.press) + A2.dot(data.u_vel) - 0.5*dt*rhsGxp + nu*dt*rhsLu
 				#rhs_v = -0.5*dt*np.dot(Gy, data.press) + np.dot(A2, data.v_vel)
-				rhs_v = -0.5*dt*Gy.dot(data.press) + A2.dot(data.v_vel)
+				rhs_v = -0.5*dt*Gy.dot(data.press) + A2.dot(data.v_vel) - 0.5*dt*rhsGyp + nu*dt*rhsLv
 				#print(sp.sparse.issparse(A1))
 				#u_star = np.linalg.solve(A1, rhs_u)
 				#v_star = np.linalg.solve(A1, rhs_v)
@@ -108,10 +211,11 @@ def time_step(mesh,data,dt,nu):
 				#print('3')
 				# Vel star star
 				#u_star_star = u_star + dt*0.5*np.dot(Gx, data.press)
-				u_star_star = u_star + dt*0.5*Gx.dot(data.press)
+				u_star_star = u_star + dt*0.5*Gx.dot(data.press) + dt*0.5*rhsGxp
 				#v_star_star = v_star + dt*0.5*np.dot(Gy, data.press)
-				v_star_star = v_star + dt*0.5*Gy.dot(data.press)
+				v_star_star = v_star + dt*0.5*Gy.dot(data.press) + dt*0.5*rhsGyp
 				#print('3a')
+				rhsDxu, rhsDyv, rhsLu, rhsLv, rhsLp, rhsGxp, rhsGyp = build_rhs(mesh,u_star_star,v_star_star,data.press,BCu,BCuvals,BCv,BCvvals)
 				# Pressure correction
 				#lhsPressure_x = dt*np.dot(Dx, Gx)
 				lhsPressure_x = dt*Dx*Gx
@@ -123,21 +227,23 @@ def time_step(mesh,data,dt,nu):
 				rhsPressure_v = 2.*Dy.dot(v_star_star)
 				#print('3b')
 				lhsPressure = lhsPressure_x + lhsPressure_y
-				rhsPressure = rhsPressure_u + rhsPressure_v
+				rhsPressure = rhsPressure_u + rhsPressure_v + 2.*rhsDxu + 2.*rhsDyv - dt*rhsLp
 				#print(sp.sparse.issparse(lhsPressure))
 				#P_tild, res, ra, s = np.linalg.lstsq(lhsPressure, rhsPressure)
 				#print('4')
 				P_tild, B = lp.gmres(lhsPressure, rhsPressure)
 				#print('5')
+				rhsDxu, rhsDyv, rhsLu, rhsLv, rhsLp, rhsGxp, rhsGyp = build_rhs(mesh,u_star_star,v_star_star,P_tild,BCu,BCuvals,BCv,BCvvals)
 				# Update velocity and pressure
 				#GPx = np.dot(Gx, P_tild)
 				GPx = Gx.dot(P_tild)
 				#GPy = np.dot(Gy, P_tild)
 				GPy = Gy.dot(P_tild)
-				data.u_vel = u_star_star - 0.5*dt*GPx
-				data.v_vel = v_star_star - 0.5*dt*GPy
+				data.u_vel = u_star_star - 0.5*dt*GPx - 0.5*dt*rhsGxp
+				data.v_vel = v_star_star - 0.5*dt*GPy - 0.5*dt*rhsGyp
 				data.press = P_tild
 		elif (solver_type == 'FEuler'):
+				# NON PERIODIC BC NOT IMPLEMENTED
 				# Solution for u by pressure projection
 				#I = np.identity((N))
 				I = sp.eye(N)
@@ -157,7 +263,7 @@ def time_step(mesh,data,dt,nu):
 				#rhsPressure_v = np.dot(Dy, Hy)
 				rhsPressure_v = Dy.dot(Hy)
 				lhsPressure = lhsPressure_x + lhsPressure_y
-				rhsPressure = rhsPressure_u + rhsPressure_v
+				rhsPressure = rhsPressure_u + rhsPressure_v 
 				#P_tild, res, ra, s = np.linalg.lstsq(lhsPressure, rhsPressure)
 				P_tild, B = lp.gmres(lhsPressure, rhsPressure)
 				#P_tild = np.linalg.solve(lhsPressure, rhsPressure)
@@ -175,17 +281,33 @@ def time_step(mesh,data,dt,nu):
 		elif solver_type == 'BEuler': # AW
 				# Solve using Backward Euler (no dt restriction)
 				# Inefficient, but robust.
+				rhsDxu, rhsDyv, rhsLu, rhsLv, rhsLp, rhsGxp, rhsGyp = build_rhs(mesh,data.u_vel,data.v_vel,data.press,BCu,BCuvals,BCv,BCvvals)
 				
 				I = sp.eye(N,format='csr')
+<<<<<<< HEAD
 				u_star = lp.spsolve(I - nu * dt * L, data.u_vel);
 				v_star = lp.spsolve(I - nu * dt * L, data.v_vel);
+=======
+	
+				u_star = lp.spsolve(I - nu * dt * L, data.u_vel + nu*dt*rhsLu)
+				v_star = lp.spsolve(I - nu * dt * L, data.v_vel + nu*dt*rhsLv)
 				
-				Div = Dx.dot(u_star) + Dy.dot(v_star);
+				rhsDxu, rhsDyv, rhsLu, rhsLv, rhsLp, rhsGxp, rhsGyp = build_rhs(mesh,u_star,v_star,data.press,BCu,BCuvals,BCv,BCvvals)
+>>>>>>> 4c31a315af0ceadca96f0639cc81d330db1b9733
+				
+				Div = Dx.dot(u_star) + Dy.dot(v_star) + rhsDxu + rhsDyv - rhsLp
 				DG = Dx*Gx + Dy*Gy; # == L ???  Nope...
 				q = lp.spsolve(DG,Div);
+<<<<<<< HEAD
 				#q = lp.bicgstab(DG,Div)[0];
 				data.u_vel = u_star - Gx.dot(q);
 				data.v_vel = v_star - Gy.dot(q);
+=======
+				
+				rhsDxu, rhsDyv, rhsLu, rhsLv, rhsLp, rhsGxp, rhsGyp = build_rhs(mesh,u_star,v_star,q,BCu,BCuvals,BCv,BCvvals)
+				data.u_vel = u_star - Gx.dot(q) - rhsGxp;
+				data.v_vel = v_star - Gy.dot(q) - rhsGyp;
+>>>>>>> 4c31a315af0ceadca96f0639cc81d330db1b9733
 				
 				try:
 					data.tracer;
