@@ -34,7 +34,7 @@ for i in range(N):
 		data.u_vel[i] = 0.5*A*(np.tanh(smoothing*(y+0.5*width)) - np.tanh(smoothing*(y-0.5*width))) - 0.5*A; 
 		data.tracer[i] = data.u_vel[i]/A + 0.5
 
-Nbin = 20
+Nbin = 100
 ybin = np.linspace(0,1,Nbin+1)
 # bin data
 velavg = np.zeros((Nbin,1))
