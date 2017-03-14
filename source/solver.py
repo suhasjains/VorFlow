@@ -82,15 +82,6 @@ def build_matrices(mesh):
 	return Dx, Dy, L, Gx, Gy
 
 
-<<<<<<< HEAD
-def time_step(mesh,data,dt,nu):
-		
-		metatic = timeit.default_timer()
-
-		Dx, Dy, L, Gx, Gy = build_matrices(mesh);
-		N = mesh.N
-		
-=======
 
 def build_rhs(mesh,u,v,p,BCu,BCuvals,BCv,BCvvals):
 	# Initialize vectors
@@ -185,7 +176,6 @@ def time_step(mesh,data,dt,nu,BCu=[0,0,0,0],BCuvals=[0,0,0,0],BCv=[0,0,0,0],BCvv
 	
 		metatic = timeit.default_timer()	
 
->>>>>>> 4c31a315af0ceadca96f0639cc81d330db1b9733
 		solver_type = 'BEuler'
 
 		if (solver_type == 'CrankNicolson'):
@@ -284,38 +274,26 @@ def time_step(mesh,data,dt,nu,BCu=[0,0,0,0],BCuvals=[0,0,0,0],BCv=[0,0,0,0],BCvv
 				rhsDxu, rhsDyv, rhsLu, rhsLv, rhsLp, rhsGxp, rhsGyp = build_rhs(mesh,data.u_vel,data.v_vel,data.press,BCu,BCuvals,BCv,BCvvals)
 				
 				I = sp.eye(N,format='csr')
-<<<<<<< HEAD
-				u_star = lp.spsolve(I - nu * dt * L, data.u_vel);
-				v_star = lp.spsolve(I - nu * dt * L, data.v_vel);
-=======
 	
 				u_star = lp.spsolve(I - nu * dt * L, data.u_vel + nu*dt*rhsLu)
 				v_star = lp.spsolve(I - nu * dt * L, data.v_vel + nu*dt*rhsLv)
 				
 				rhsDxu, rhsDyv, rhsLu, rhsLv, rhsLp, rhsGxp, rhsGyp = build_rhs(mesh,u_star,v_star,data.press,BCu,BCuvals,BCv,BCvvals)
->>>>>>> 4c31a315af0ceadca96f0639cc81d330db1b9733
 				
 				Div = Dx.dot(u_star) + Dy.dot(v_star) + rhsDxu + rhsDyv - rhsLp
 				DG = Dx*Gx + Dy*Gy; # == L ???  Nope...
 				q = lp.spsolve(DG,Div);
-<<<<<<< HEAD
-				#q = lp.bicgstab(DG,Div)[0];
-				data.u_vel = u_star - Gx.dot(q);
-				data.v_vel = v_star - Gy.dot(q);
-=======
 				
 				rhsDxu, rhsDyv, rhsLu, rhsLv, rhsLp, rhsGxp, rhsGyp = build_rhs(mesh,u_star,v_star,q,BCu,BCuvals,BCv,BCvvals)
 				data.u_vel = u_star - Gx.dot(q) - rhsGxp;
 				data.v_vel = v_star - Gy.dot(q) - rhsGyp;
->>>>>>> 4c31a315af0ceadca96f0639cc81d330db1b9733
 				
 				try:
 					data.tracer;
 				except AttributeError:
 					toodle=0;
 				else: # Well then diffuse the tracer already
-					nuTracer = nu;
-					Visc = I - nuTracer * dt * L;
+					Visc = I - nu * dt * L;
 					#VDivX = dt * sp.csr_matrix((data.u_vel,(range(N),range(N))))*Dx; 
 					#VDivY = dt * sp.csr_matrix((data.v_vel,(range(N),range(N))))*Dy;
 					data.tracer = lp.spsolve(Visc, data.tracer) # Just diffusive
