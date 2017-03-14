@@ -53,7 +53,7 @@ def save_frame(mesh,field,name,time,ax,fileName,plotMesh=False):
 		fig = plt.gcf();
 		ax.clear()
 		# Plots the mesh and colours
-		if plotMesh: voronoi_plot_2d(mesh.voronoi,ax)
+		if plotMesh: voronoi_plot_2d(mesh.voronoi,ax,show_vertices=False)
 		
 		cmap = cm.get_cmap('RdBu')
 		mappable = cm.ScalarMappable(cmap=cmap)
