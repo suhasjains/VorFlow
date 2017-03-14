@@ -11,22 +11,22 @@ Nx = 150;
 N = Nx**2
 L_x = 1.
 L_y = 1.
-dt = 1./Nx;
+dt = 1./Nx/5.;
 dTPlot = 0.05
 Tend = 10.
-nu = 1e-6
+nu = 1e-4
 rho = 1.
 
-mesh = Mesh(N,L_x,L_y,np.zeros(4),'random')
+mesh = Mesh(N,L_x,L_y,np.zeros(4),'cartesian')
 data = Data(N);
 data.tracer = np.zeros(N);
 
 A = 1.;
-uPrime = A/10.;
+uPrime = A/20.;
 k_x = 2.;
 width = 1./3.;
 centre = 0.5;
-smoothing = 200.;
+smoothing = 100.;
 
 for i in range(N):
 		y = mesh.centroid[i][1] - centre;
@@ -43,6 +43,7 @@ tprint = 0.
 i = 0;
 while t < Tend:
 		if t >= tprint:
+			print 'Saving...'
 			tprint += dTPlot;
 			#save_frame(mesh,data.tracer,'Tracer',t,ax,'output/tracer'+'{:04d}'.format(i)+'.png',False)
 			#save_frame(mesh,0.5*(data.u_vel**2+data.v_vel**2),'Energy',t,ax,'output/energy'+'{:04d}'.format(i)+'.png',False)
@@ -52,6 +53,7 @@ while t < Tend:
 			pickle.dump([mesh,data,t],fileObject)
 			fileObject.close()
 			i += 1
+			print 'Saved!'
 		
 		data = time_step(mesh,data,dt,nu)	
 		mesh.update_mesh(data, dt)

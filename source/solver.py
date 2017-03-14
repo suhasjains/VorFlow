@@ -78,12 +78,12 @@ def build_matrices(mesh):
 
 
 def time_step(mesh,data,dt,nu):
-	
+		
+		metatic = timeit.default_timer()
+
 		Dx, Dy, L, Gx, Gy = build_matrices(mesh);
 		N = mesh.N
 		
-		metatic = timeit.default_timer()		
-
 		solver_type = 'BEuler'
 
 		if (solver_type == 'CrankNicolson'):
@@ -177,13 +177,13 @@ def time_step(mesh,data,dt,nu):
 				# Inefficient, but robust.
 				
 				I = sp.eye(N,format='csr')
-				
 				u_star = lp.spsolve(I - nu * dt * L, data.u_vel);
 				v_star = lp.spsolve(I - nu * dt * L, data.v_vel);
 				
 				Div = Dx.dot(u_star) + Dy.dot(v_star);
 				DG = Dx*Gx + Dy*Gy; # == L ???  Nope...
 				q = lp.spsolve(DG,Div);
+				#q = lp.bicgstab(DG,Div)[0];
 				data.u_vel = u_star - Gx.dot(q);
 				data.v_vel = v_star - Gy.dot(q);
 				
@@ -192,7 +192,8 @@ def time_step(mesh,data,dt,nu):
 				except AttributeError:
 					toodle=0;
 				else: # Well then diffuse the tracer already
-					Visc = I - nu * dt * L;
+					nuTracer = nu;
+					Visc = I - nuTracer * dt * L;
 					#VDivX = dt * sp.csr_matrix((data.u_vel,(range(N),range(N))))*Dx; 
 					#VDivY = dt * sp.csr_matrix((data.v_vel,(range(N),range(N))))*Dy;
 					data.tracer = lp.spsolve(Visc, data.tracer) # Just diffusive
