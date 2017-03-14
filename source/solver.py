@@ -274,7 +274,7 @@ def time_step(mesh,data,dt,nu,BCu=[0,0,0,0],BCuvals=[0,0,0,0],BCv=[0,0,0,0],BCvv
 				rhsDxu, rhsDyv, rhsLu, rhsLv, rhsLp, rhsGxp, rhsGyp = build_rhs(mesh,data.u_vel,data.v_vel,data.press,BCu,BCuvals,BCv,BCvvals)
 				
 				I = sp.eye(N,format='csr')
-				
+	
 				u_star = lp.spsolve(I - nu * dt * L, data.u_vel + nu*dt*rhsLu)
 				v_star = lp.spsolve(I - nu * dt * L, data.v_vel + nu*dt*rhsLv)
 				
