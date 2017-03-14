@@ -6,7 +6,7 @@ from plotting import *
 from solver import *
 import pickle
 
-Nx = 150;
+Nx = 150
 
 N = Nx**2
 L_x = 1.
@@ -14,16 +14,12 @@ L_y = 1.
 dt = 1./Nx;
 dTPlot = 0.05
 Tend = 10.
-nu = 1 #Re=1
+nu = 0.1 #Re=10
 rho = 1.
 
 mesh = Mesh(N,L_x,L_y,np.zeros(4),'random')
 data = Data(N);
 data.tracer = np.zeros(N);
-
-Nbin = 20
-velavg = np.zeros((N,1))
-ybin = np.linspace(0,1,Nbin+1)
 
 A = 1.;
 uPrime = 0.; #No perturbation
@@ -37,6 +33,21 @@ for i in range(N):
 		x = mesh.centroid[i][0];
 		data.u_vel[i] = 0.5*A*(np.tanh(smoothing*(y+0.5*width)) - np.tanh(smoothing*(y-0.5*width))) - 0.5*A; 
 		data.tracer[i] = data.u_vel[i]/A + 0.5
+
+Nbin = 20
+ybin = np.linspace(0,1,Nbin+1)
+# bin data
+velavg = np.zeros((Nbin,1))
+velcount = np.zeros((Nbin,1))
+for k in range(N):
+	ypt = mesh.centroid[k][1]
+	for j in range(Nbin):
+		if ybin[j]<=ypt and ypt<ybin[j+1]:
+			velavg[j] += data.u_vel[k]
+			velcount[j] += 1.
+for k in range(Nbin):
+	if velcount[k] > 1E-10:
+		velavg[k] = velavg[k] / velcount[k]
 
 
 t = 0.
@@ -61,12 +72,14 @@ while t < Tend:
 		t += dt
 
 		# bin data
-		velavg = np.zeros((N,1))
-		velcount = np.zeros((N,1))
-		for i in range(N):
-			ypt = mesh.centroid[i][1]
+		velavg = np.zeros((Nbin,1))
+		velcount = np.zeros((Nbin,1))
+		for k in range(N):
+			ypt = mesh.centroid[k][1]
 			for j in range(Nbin):
 				if ybin[j]<=ypt and ypt<ybin[j+1]:
-					velavg += data.u_vel[i]
-					velcount += 1
-		velavg = np.divide(velavg,velcount)	
+					velavg[j] += data.u_vel[k]
+					velcount[j] += 1.
+		for k in range(Nbin):
+			if velcount[k] > 1E-10:
+				velavg[k] = velavg[k] / velcount[k]
