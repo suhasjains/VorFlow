@@ -296,13 +296,13 @@ class Mesh:
 				for i in range(self.N):
 						self.grad_area[i] = np.zeros((self.N_neighbor[i]+1,2));
 						for j in range(self.N_neighbor[i]):
-							if self.boundary == "Internal":
+                                                        if self.is_periodic or (not self.is_periodic and self.boundary == "Internal"):
 								X = self.site[i,:];
 								Y = tiled_site[self.neighbor[i][j],:]; # Must be the periodic extension for the distances to work out
 								XY = np.sqrt(np.sum(np.square(Y-X)));
 								T = 0.5 * (X + Y) - self.face_center[i][j,:] - X; # Tangent vector
 								self.grad_area[i][j,:] = self.face[i][j] * (0.5*(Y - X) + T) / XY
-							else:
+                                                        if not self.is_periodic and not self.boundary == "Internal":
 								self.grad_area[i][j,0] = 0.;
 								self.grad_area[i][j,1] = 0.;
 								 
@@ -313,12 +313,12 @@ class Mesh:
 				for i in range(self.N):
 						self.grad_area_t[i] = np.zeros((self.N_neighbor[i]+1,2));
 						for j in range(self.N_neighbor[i]):
-							if self.boundary == "Internal":
+                                                        if self.is_periodic or (not self.is_periodic and self.boundary == "Internal"):
 								neighbor_j = self.neighbor[i][j]%self.N; # Absolute index of the jth neighbour to i (Note wraps around)
                                                                 #print neighbor_j;
 								relative_i = np.where(self.neighbor[neighbor_j]%self.N == i)[0][0]; # Relative neighbour index of i from cell j
 								self.grad_area_t[i][j,:] = self.grad_area[neighbor_j][relative_i,:];
-							else:
+                                                        if not self.is_periodic and not self.boundary == "Internal":
 								self.grad_area_t[i][j,0] = 0.;
 								self.grad_area_t[i][j,1] = 0.;
 						
