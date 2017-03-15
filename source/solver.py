@@ -280,7 +280,8 @@ def time_step(mesh,data,dt,nu,BCu=[0,0,0,0],BCuvals=[0,0,0,0],BCv=[0,0,0,0],BCvv
 				
 				rhsDxu, rhsDyv, rhsLu, rhsLv, rhsLp, rhsGxp, rhsGyp = build_rhs(mesh,u_star,v_star,data.press,BCu,BCuvals,BCv,BCvvals)
 				
-				Div = Dx.dot(u_star) + Dy.dot(v_star) + rhsDxu + rhsDyv - rhsLp
+				#Div = Dx.dot(u_star) + Dy.dot(v_star) + rhsDxu + rhsDyv - rhsLp
+				Div = Dx.dot(u_star) + Dy.dot(v_star) 
 				DG = Dx*Gx + Dy*Gy; # == L ???  Nope...
 				q = lp.spsolve(DG,Div);
 				
