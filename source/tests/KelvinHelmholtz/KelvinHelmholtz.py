@@ -26,7 +26,7 @@ uPrime = A/20.;
 k_x = 2.;
 width = 1./3.;
 centre = 0.5;
-smoothing = 100.;
+smoothing = 200.;
 
 for i in range(N):
 		y = mesh.centroid[i][1] - centre;

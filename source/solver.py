@@ -271,7 +271,6 @@ def time_step(mesh,data,dt,nu,BCu=[0,0,0,0],BCuvals=[0,0,0,0],BCv=[0,0,0,0],BCvv
 				data.u_vel = data.u_vel + rhs_u
 				data.v_vel = data.v_vel + rhs_v
 				data.press = P_tild
-
 		elif solver_type == 'BEuler': # AW
 				# Solve using Backward Euler (no dt restriction)
 				# Inefficient, but robust.
@@ -298,13 +297,74 @@ def time_step(mesh,data,dt,nu,BCu=[0,0,0,0],BCuvals=[0,0,0,0],BCv=[0,0,0,0],BCvv
 				except AttributeError:
 					toodle=0;
 				else: # Well then diffuse the tracer already
-					Visc = I - nu * dt * L;
+					nuTracer = 1.e-8
+					Visc = I - nuTracer * dt * L;
 					#VDivX = dt * sp.csr_matrix((data.u_vel,(range(N),range(N))))*Dx; 
 					#VDivY = dt * sp.csr_matrix((data.v_vel,(range(N),range(N))))*Dy;
 					data.tracer = lp.spsolve(Visc, data.tracer) # Just diffusive
 				
 				data.press = q/dt;
+		elif solver_type == 'BEulerStab': #AW
+				# Solves with STABILISED Projection method (eq 5.9 Borgers)
+				
+				I = sp.eye(N,format='csr')
+				
+				u_star = lp.spsolve(I - nu * dt * L, data.u_vel);
+ 				v_star = lp.spsolve(I - nu * dt * L, data.v_vel);
+				
+				# Stable iterative projection:
+				rho = np.abs(lp.eigs(L,1,which='LM',tol=0.01)[0][0]) # Spectral radius
+				#print rho
+				omega = 0.9/rho;
+				
+				tol = 1e-6; # Relative tolerance for divergence
+				u_J = u_star;
+				v_J = v_star;
+				q_J = u_star * 0.;
+				while np.linalg.norm( Dx.dot(u_J) + Dy.dot(v_J) ,2) > tol:
+					# Iterate until uJ ~ Pu
+					k = 0;
+					u_jk = u_J;
+					v_jk = v_J;
+					
+					q_jkP1 = lp.spsolve(L,Dx.dot(u_jk)+Dy.dot(v_jk));
+					u_jkP1 = u_jk - Gx.dot(q_jkP1);
+					v_jkP1 = v_jk - Gy.dot(q_jkP1);
+					
+					while (np.sqrt(np.linalg.norm( u_jkP1 ,2)**2 + np.linalg.norm( v_jkP1 ,2)**2)) >= (np.sqrt(np.linalg.norm( u_J ,2)**2 + np.linalg.norm( v_J ,2)**2) + 1.e-10):
+						k += 1;
+						print k
+						#print (np.linalg.norm( u_jkP1 ,2) - np.linalg.norm( u_J ,2))
+						#print (np.linalg.norm( v_jkP1 ,2) - np.linalg.norm( v_J ,2))
+						print (np.sqrt(np.linalg.norm( u_jkP1 ,2)**2 + np.linalg.norm( v_jkP1 ,2)**2) - np.sqrt(np.linalg.norm( u_J ,2)**2 + np.linalg.norm( v_J ,2)**2))
+						u_jk = u_jkP1;
+						v_jk = v_jkP1;
+						q_jk = q_jkP1;
 						
+						
+						q_jkP1 = L.dot(q_jk) * omega;
+						u_jkP1 = u_jk - Gx.dot(q_jkP1);
+						v_jkP1 = v_jk - Gy.dot(q_jkP1);
+					
+					#print k
+					u_J = u_jkP1;
+					v_J = v_jkP1;
+					q_J = q_jkP1;
+				
+				data.u_vel = u_J;
+				data.v_vel = v_J;
+				
+				try:
+					data.tracer;
+ 				except AttributeError:
+ 					toodle=0;
+ 				else: # Well then diffuse the tracer already
+ 					nuTracer = 1.e-8;
+ 					Visc = I - nuTracer * dt * L;
+ 					data.tracer = lp.spsolve(Visc, data.tracer) # Just diffusive
+ 				
+				data.press = q_J/dt;
+		
 		metatoc = timeit.default_timer()
 		print 'Solving Complete: '+'{:.2e}'.format(metatoc-metatic)+' s'
 		

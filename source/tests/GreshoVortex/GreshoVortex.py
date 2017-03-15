@@ -11,10 +11,10 @@ Nx = 25;
 N = Nx**2
 L_x = 1.
 L_y = 1.
-dt = 0.005;
-dTPlot = 0.005
+dt = 0.0025;
+dTPlot = 0.0025
 Tend = 10.
-nu = 1e-4
+nu = 1e-2
 rho = 1.
 
 mesh = Mesh(N,L_x,L_y,np.zeros(4),'cartesian')
@@ -49,8 +49,8 @@ i = 0;
 while t < Tend:
 		data = time_step(mesh,data,dt,nu)
 		#make_frame(mesh,data.u_vel**2 + data.v_vel**2,'Energy',ax,False)
-		save_frame(mesh,data.u_vel**2 + data.v_vel**2,'Energy',t,ax,'energy'+'{:04d}'.format(i)+'.png',True)
-		save_frame(mesh,data.press,'Pressure',t,ax,'pressure'+'{:04d}'.format(i)+'.png',True)
+		save_frame(mesh,data.u_vel**2 + data.v_vel**2,'Energy',t,ax,'output/energy'+'{:04d}'.format(i)+'.png',True)
+		save_frame(mesh,data.press,'Pressure',t,ax,'output/pressure'+'{:04d}'.format(i)+'.png',True)
 		mesh.update_mesh(data, dt)
 		t += dt
 		i += 1;
