@@ -6,12 +6,12 @@ from plotting import *
 from solver import *
 import pickle
 
-Nx = 10;
+Nx = 50;
 
 N = Nx**2
 L_x = 1.
 L_y = 1.
-dt = 1./Nx
+dt = 0.5/Nx
 dTPlot = 5*dt
 Tend = 10.
 nu = 1e-6
