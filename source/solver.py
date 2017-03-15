@@ -176,7 +176,7 @@ def time_step(mesh,data,dt,nu,BCu=[0,0,0,0],BCuvals=[0,0,0,0],BCv=[0,0,0,0],BCvv
 	
 		metatic = timeit.default_timer()	
 
-		solver_type = 'BEuler'
+		solver_type = 'CrankNicolson'
 
 		if (solver_type == 'CrankNicolson'):
 				rhsDxu, rhsDyv, rhsLu, rhsLv, rhsLp, rhsGxp, rhsGyp = build_rhs(mesh,data.u_vel,data.v_vel,data.press,BCu,BCuvals,BCv,BCvvals)
@@ -195,9 +195,11 @@ def time_step(mesh,data,dt,nu,BCu=[0,0,0,0],BCuvals=[0,0,0,0],BCv=[0,0,0,0],BCvv
 				#u_star = np.linalg.solve(A1, rhs_u)
 				#v_star = np.linalg.solve(A1, rhs_v)
 				#print('1')
-				u_star,B = lp.gmres(A1, rhs_u)
+				#u_star,B = lp.gmres(A1, rhs_u)
+				u_star = lp.spsolve(A1, rhs_u)
 				#print('2')
-				v_star,B = lp.gmres(A1, rhs_v)
+				#v_star,B = lp.gmres(A1, rhs_v)
+				v_star = lp.spsolve(A1, rhs_v)
 				#print('3')
 				# Vel star star
 				#u_star_star = u_star + dt*0.5*np.dot(Gx, data.press)
@@ -221,7 +223,8 @@ def time_step(mesh,data,dt,nu,BCu=[0,0,0,0],BCuvals=[0,0,0,0],BCv=[0,0,0,0],BCvv
 				#print(sp.sparse.issparse(lhsPressure))
 				#P_tild, res, ra, s = np.linalg.lstsq(lhsPressure, rhsPressure)
 				#print('4')
-				P_tild, B = lp.gmres(lhsPressure, rhsPressure)
+				#P_tild, B = lp.gmres(lhsPressure, rhsPressure)
+				P_tild = lp.spsolve(lhsPressure, rhsPressure)
 				#print('5')
 				rhsDxu, rhsDyv, rhsLu, rhsLv, rhsLp, rhsGxp, rhsGyp = build_rhs(mesh,u_star_star,v_star_star,P_tild,BCu,BCuvals,BCv,BCvvals)
 				# Update velocity and pressure
@@ -255,7 +258,8 @@ def time_step(mesh,data,dt,nu,BCu=[0,0,0,0],BCuvals=[0,0,0,0],BCv=[0,0,0,0],BCvv
 				lhsPressure = lhsPressure_x + lhsPressure_y
 				rhsPressure = rhsPressure_u + rhsPressure_v 
 				#P_tild, res, ra, s = np.linalg.lstsq(lhsPressure, rhsPressure)
-				P_tild, B = lp.gmres(lhsPressure, rhsPressure)
+				#P_tild, B = lp.gmres(lhsPressure, rhsPressure)
+				P_tild = lp.spsolve(lhsPressure, rhsPressure)
 				#P_tild = np.linalg.solve(lhsPressure, rhsPressure)
 				#res_norm = np.linalg.norm(res)
 				#print(res_norm)
