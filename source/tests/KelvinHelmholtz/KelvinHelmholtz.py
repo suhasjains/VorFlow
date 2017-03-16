@@ -14,7 +14,7 @@ L_y = 1.
 dt = 1./Nx/5.;
 dTPlot = 0.05
 Tend = 10.
-nu = 1e-4
+nu = 1e-3
 rho = 1.
 
 mesh = Mesh(N,L_x,L_y,np.zeros(4),'cartesian')
@@ -22,11 +22,11 @@ data = Data(N);
 data.tracer = np.zeros(N);
 
 A = 1.;
-uPrime = A/20.;
+uPrime = A/100.;
 k_x = 2.;
 width = 1./3.;
 centre = 0.5;
-smoothing = 200.;
+smoothing = 100.;
 
 for i in range(N):
 		y = mesh.centroid[i][1] - centre;
@@ -53,7 +53,7 @@ while t < Tend:
 			pickle.dump([mesh,data,t],fileObject)
 			fileObject.close()
 			i += 1
-			print 'Saved!'
+			print 'Saved! t = '+str(t)
 		
 		data = time_step(mesh,data,dt,nu)	
 		mesh.update_mesh(data, dt)
