@@ -4,4 +4,4 @@ echo -n "Enter file handle: "
 read handle
 echo -n "Enter GIF Name: "
 read name
-convert -delay 1x4 `seq -f ./${handle}%04g.png 1 $text`  -coalesce -layers OptimizeTransparency ${name}.gif
+convert -delay 1x4 `seq -f ${PWD}/${handle}%04g.png 1 $text`  -coalesce -layers OptimizeTransparency ${name}.gif

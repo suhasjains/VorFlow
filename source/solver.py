@@ -176,7 +176,7 @@ def time_step(mesh,data,dt,nu,BCu=[0,0,0,0],BCuvals=[0,0,0,0],BCv=[0,0,0,0],BCvv
 	
 		metatic = timeit.default_timer()	
 
-		solver_type = 'CrankNicolson'
+		solver_type = 'BEuler'
 
 		if (solver_type == 'CrankNicolson'):
 				rhsDxu, rhsDyv, rhsLu, rhsLv, rhsLp, rhsGxp, rhsGyp = build_rhs(mesh,data.u_vel,data.v_vel,data.press,BCu,BCuvals,BCv,BCvvals)
@@ -297,7 +297,7 @@ def time_step(mesh,data,dt,nu,BCu=[0,0,0,0],BCuvals=[0,0,0,0],BCv=[0,0,0,0],BCvv
 				except AttributeError:
 					toodle=0;
 				else: # Well then diffuse the tracer already
-					nuTracer = 1.e-8
+					nuTracer = 1.e-5
 					Visc = I - nuTracer * dt * L;
 					#VDivX = dt * sp.csr_matrix((data.u_vel,(range(N),range(N))))*Dx; 
 					#VDivY = dt * sp.csr_matrix((data.v_vel,(range(N),range(N))))*Dy;
@@ -315,14 +315,17 @@ def time_step(mesh,data,dt,nu,BCu=[0,0,0,0],BCuvals=[0,0,0,0],BCv=[0,0,0,0],BCvv
 				# Stable iterative projection:
 				rho = np.abs(lp.eigs(L,1,which='LM',tol=0.01)[0][0]) # Spectral radius
 				#print rho
-				omega = 0.9/rho;
+				omega = 0.8/rho;
 				
-				tol = 1e-6; # Relative tolerance for divergence
+				tol = 1e-8; # Relative tolerance for divergence
 				u_J = u_star;
 				v_J = v_star;
 				q_J = u_star * 0.;
-				while np.linalg.norm( Dx.dot(u_J) + Dy.dot(v_J) ,2) > tol:
+				i_outer = 0;
+				k = 0;
+				while np.linalg.norm( Dx.dot(u_J) + Dy.dot(v_J), 2) > tol and i_outer < 1000:
 					# Iterate until uJ ~ Pu
+					i_outer += 1;
 					k = 0;
 					u_jk = u_J;
 					v_jk = v_J;
@@ -331,12 +334,12 @@ def time_step(mesh,data,dt,nu,BCu=[0,0,0,0],BCuvals=[0,0,0,0],BCv=[0,0,0,0],BCvv
 					u_jkP1 = u_jk - Gx.dot(q_jkP1);
 					v_jkP1 = v_jk - Gy.dot(q_jkP1);
 					
-					while (np.sqrt(np.linalg.norm( u_jkP1 ,2)**2 + np.linalg.norm( v_jkP1 ,2)**2)) >= (np.sqrt(np.linalg.norm( u_J ,2)**2 + np.linalg.norm( v_J ,2)**2) + 1.e-10):
+					while (np.sqrt(np.linalg.norm( u_jkP1 ,2)**2 + np.linalg.norm( v_jkP1 ,2)**2)) >= (np.sqrt(np.linalg.norm( u_J ,2)**2 + np.linalg.norm( v_J ,2)**2) + 1.e-14) and k < 1000:
 						k += 1;
-						print k
+						#print k
 						#print (np.linalg.norm( u_jkP1 ,2) - np.linalg.norm( u_J ,2))
 						#print (np.linalg.norm( v_jkP1 ,2) - np.linalg.norm( v_J ,2))
-						print (np.sqrt(np.linalg.norm( u_jkP1 ,2)**2 + np.linalg.norm( v_jkP1 ,2)**2) - np.sqrt(np.linalg.norm( u_J ,2)**2 + np.linalg.norm( v_J ,2)**2))
+						#print (np.sqrt(np.linalg.norm( u_jkP1 ,2)**2 + np.linalg.norm( v_jkP1 ,2)**2) - np.sqrt(np.linalg.norm( u_J ,2)**2 + np.linalg.norm( v_J ,2)**2))
 						u_jk = u_jkP1;
 						v_jk = v_jkP1;
 						q_jk = q_jkP1;
@@ -350,6 +353,9 @@ def time_step(mesh,data,dt,nu,BCu=[0,0,0,0],BCuvals=[0,0,0,0],BCv=[0,0,0,0],BCvv
 					u_J = u_jkP1;
 					v_J = v_jkP1;
 					q_J = q_jkP1;
+				
+				if i_outer >= 999 or k >= 999:
+					print np.linalg.norm( Dx.dot(u_J) + Dy.dot(v_J), 2)
 				
 				data.u_vel = u_J;
 				data.v_vel = v_J;

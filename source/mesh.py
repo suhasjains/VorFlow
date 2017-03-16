@@ -147,7 +147,7 @@ class Mesh:
 														 2.*self.L_y - self.site[:,1]))
 
 				# Call Voronoi Mesher
-				print tiled_site;
+				#print tiled_site;
 				voronoi = Voronoi(tiled_site,qhull_options='Qbb Qc C-0');
 				self.voronoi = voronoi; # Store for use later when plotting
 				
@@ -214,7 +214,7 @@ class Mesh:
 								self.length[i][j,:] = voronoi.points[self.neighbor[i][j]] - voronoi.points[i];
 								Lmin = np.min([np.sqrt(self.length[i][j,0]**2 + self.length[i][j,1]**2),Lmin])
 
-				print Lmin
+				print 'dx_min = '+str(Lmin)
 				if profile:
 						toc = timeit.default_timer()
 						print '2: '+'{:.2e}'.format((toc-tic)/self.N)+' s'
