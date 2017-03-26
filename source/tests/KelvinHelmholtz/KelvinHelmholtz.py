@@ -6,7 +6,7 @@ from plotting import *
 from solver import *
 import pickle
 
-Nx = 150;
+Nx = 100;
 
 N = Nx**2
 L_x = 1.
@@ -22,7 +22,7 @@ data = Data(N);
 data.tracer = np.zeros(N);
 
 A = 1.;
-uPrime = A/100.;
+uPrime = A/10.;
 k_x = 2.;
 width = 1./3.;
 centre = 0.5;

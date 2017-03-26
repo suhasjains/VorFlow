@@ -50,7 +50,7 @@ class Mesh:
 
 				self.centroid = np.zeros([N,2]);
 				self.area = np.zeros(N);
-				self.N_neighbor = np.zeros(N,dtype=int);
+				self.N_neighbor = np.zeros(N,dtype=np.int64);
 				# These will be lists of arrays, i.e. neighbour[i][j]
 				self.neighbor = range(N);
 				self.length = range(N);
