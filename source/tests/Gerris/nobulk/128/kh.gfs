@@ -1,0 +1,65 @@
+1 2 GfsSimulation GfsBox GfsGEdge {} {
+Global {
+        // Parameters
+        static double Re = 50;
+        static double ReSr = 1.2;
+        static double cavity_depth = 1.0;
+        static double floor_depth = 0.5;
+	static double Amp = 1.;
+	static double uPrime = 1./10.;
+	static double k_x = 2.;
+	static double width = 1./3.;
+	static double centre = 0.5;
+	static double smoothing = 100.;
+
+	
+
+
+
+        // Velocity distributions
+        static double u_velocity_bc(double y) {
+     		return 0.5*Amp*(tanh(smoothing*(y+0.5*width)) - tanh(smoothing*(y-0.5*width))) - 0.5*Amp;
+	}
+        static double v_velocity_bc(double x) {
+		return uPrime * sin(2.*M_PI*k_x * x/1.);
+	}
+
+    }	
+
+
+
+
+    Refine 7
+
+    Time { end = 0.2 }
+
+    SourceViscosity 0.001
+
+    # Initialise the tracer location
+    VariableTracerVOF T
+    Init {} {
+     		U = 0.5*Amp*(tanh(smoothing*(y+0.5*width)) - tanh(smoothing*(y-0.5*width))) - 0.5*Amp;
+		V = uPrime * sin(2.*M_PI*k_x * x/1.);
+		T = U/Amp + 0.5;
+    }
+
+    # Output of solution information/data
+    OutputScalarNorm { istep = 1 } v_rms { v = V }
+    OutputTime { istep = 10 } stderr
+    OutputProjectionStats { istep = 10 } stderr
+    OutputDiffusionStats { istep = 10 } stderr
+    OutputTiming { start = end } stderr
+	OutputSimulation { istep = 1 } %lf { variables = V format = text }
+	OutputSimulation { start = end } end.gfs
+
+# GModule gfsview
+#  OutputView { istep = 2 } { ppm2mpeg > tracer.mpg } {
+#      width = 1920 height = 1080
+#  } temp.gfv
+
+
+}
+
+GfsBox {}
+1 1 top
+1 1 right
