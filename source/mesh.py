@@ -44,7 +44,7 @@ class Mesh:
 						self.site[:,0] = L_x*((self.site[:,0]/sqrtN + L_x/(2.*sqrtN))**2);
 						self.site[:,1] = L_y*((self.site[:,1]/sqrtN + L_y/(2.*sqrtN))**2);
 				else:
-						raise ValueError("You can't spell, fool...")
+						raise ValueError("You can't spell..")
 
 
 
